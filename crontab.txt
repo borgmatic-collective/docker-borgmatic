@@ -1,0 +1,1 @@
+0 1 * * * root PATH=$PATH:/usr/bin /usr/bin/borgmatic -c /config  -v 1 2>&1
