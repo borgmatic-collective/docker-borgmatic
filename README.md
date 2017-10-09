@@ -11,11 +11,14 @@ It uses cron to run the backups at a time you can configure in `crontab.txt`.
 
 You will need to create crontab.txt and your borgmatic config.yml and mount these files into your /config directory. When the container starts it creates the crontab from /config/crontab.txt and starts crond.
 
+If using remote repositories mount your .ssh to /root/.ssh within the container
+
 ### Example run command
 ```
 docker run -d \
   -v /home:/source/home:ro \
   -v /mnt/borg:/repository \
+  -v /home/user/.ssh:/root/.ssh \
   -v /srv/borgmatic/config:/config \
   -v /srv/borgmatic/cache:/cache \
   b3vis/borgmatic
@@ -37,6 +40,8 @@ A non volatile place to store the borg chunk cache
 Your data you wish to backup
 #### /repository
 Mount your borg backup repository here
+#### /root/.ssh
+Mount either your own .ssh here or create a new one with ssh keys in for your remote repo locations
 
 ### Dockerfile
 ```
@@ -56,17 +61,21 @@ RUN apk upgrade --no-cache \
     gcc \
     python3-dev \
     acl-dev \
+    sshfs \
+    linux-headers \
     && pip3 install --upgrade pip \
     && pip3 install --upgrade borgbackup \
     && pip3 install --upgrade borgmatic \
-    && mkdir /config /cache /source /repository \
+    && mkdir /config /cache /source /repository /root/.ssh\
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
 VOLUME /config
 VOLUME /cache
 VOLUME /source
 VOLUME /repository
+VOLUME /root/.ssh
 # Set Envars
 ENV BORG_CACHE_DIR /cache
 CMD ["/entry.sh"]
+
 ```

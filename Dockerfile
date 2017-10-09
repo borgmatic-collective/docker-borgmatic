@@ -14,16 +14,19 @@ RUN apk upgrade --no-cache \
     gcc \
     python3-dev \
     acl-dev \
+    sshfs \
+    linux-headers \
     && pip3 install --upgrade pip \
     && pip3 install --upgrade borgbackup \
     && pip3 install --upgrade borgmatic \
-    && mkdir /config /cache /source /repository \
+    && mkdir /config /cache /source /repository /root/.ssh\
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
 VOLUME /config
 VOLUME /cache
 VOLUME /source
 VOLUME /repository
+VOLUME /root/.ssh
 # Set Envars
 ENV BORG_CACHE_DIR /cache
 CMD ["/entry.sh"]
