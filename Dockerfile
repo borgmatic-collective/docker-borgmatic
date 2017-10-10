@@ -14,7 +14,6 @@ RUN apk upgrade --no-cache \
     gcc \
     python3-dev \
     acl-dev \
-    sshfs \
     linux-headers \
     && pip3 install --upgrade pip \
     && pip3 install --upgrade borgbackup \
