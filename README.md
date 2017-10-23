@@ -32,7 +32,7 @@ Where you need to create crontab.txt and your borgmatic config.yml
 #### crontab.txt example
 In this file set the time you wish for your backups to take place default is 1am every day. In here you can add any other tasks you want ran
 ```
-0 1 * * * root PATH=$PATH:/usr/bin /usr/bin/borgmatic -c /config  -v 1 2>&1
+0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic -c /config  -v 1 2>&1
 ```
 #### /cache
 A non volatile place to store the borg chunk cache
@@ -61,7 +61,6 @@ RUN apk upgrade --no-cache \
     gcc \
     python3-dev \
     acl-dev \
-    sshfs \
     linux-headers \
     && pip3 install --upgrade pip \
     && pip3 install --upgrade borgbackup \
