@@ -43,6 +43,11 @@ Mount your borg backup repository here
 #### /root/.ssh
 Mount either your own .ssh here or create a new one with ssh keys in for your remote repo locations
 
+### Environment
+
+#### TZ
+You can set TZ to specify a time zone, `Europe/Berlin`.
+
 ### Dockerfile
 ```
 FROM alpine:latest
@@ -50,6 +55,7 @@ MAINTAINER b3vis
 COPY entry.sh /entry.sh
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
+    tzdata \
     curl \
     sshfs \
     python3 \
