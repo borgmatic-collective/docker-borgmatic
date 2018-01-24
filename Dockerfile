@@ -3,6 +3,7 @@ MAINTAINER b3vis
 COPY entry.sh /entry.sh
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
+    tzdata \
     curl \
     sshfs \
     python3 \
