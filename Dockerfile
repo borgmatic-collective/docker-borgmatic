@@ -12,9 +12,12 @@ RUN apk upgrade --no-cache \
     lz4-dev \
     acl-dev \
     linux-headers \
+    fuse-dev \
+    attr-dev \
     && pip3 install --upgrade pip \
     && pip3 install --upgrade borgbackup \
     && pip3 install --upgrade borgmatic \
+    && pip3 install llfuse \
     && mkdir /config /cache /source /repository /root/.ssh \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
