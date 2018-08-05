@@ -22,6 +22,7 @@ RUN apk upgrade --no-cache \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
 VOLUME /config
+VOLUME /etc/borgmatic.d
 VOLUME /cache
 VOLUME /source
 VOLUME /repository

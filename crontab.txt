@@ -1,1 +1,1 @@
-0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic -c /config/config.yaml  -v 1 2>&1
+0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic -v 1 2>&1
