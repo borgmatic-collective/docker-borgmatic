@@ -20,6 +20,7 @@ docker run -d \
   -v /mnt/borg:/repository \
   -v /home/user/.ssh:/root/.ssh \
   -v /srv/borgmatic/config:/config \
+  -v /srv/borgmatic/borgmatic.d:/etc/borgmatic.d/
   -v /srv/borgmatic/cache:/cache \
   b3vis/borgmatic
 ```
@@ -75,6 +76,7 @@ RUN apk upgrade --no-cache \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
 VOLUME /config
+VOLUME /etc/borgmatic.d
 VOLUME /cache
 VOLUME /source
 VOLUME /repository
