@@ -15,7 +15,8 @@ If using remote repositories mount your .ssh to /root/.ssh within the container
 
 ### Example run command
 ```
-docker run -d \
+docker run \
+  --detach --name borgmatic \
   -v /home:/source/home:ro \
   -v /mnt/borg:/repository \
   -v /home/user/.ssh:/root/.ssh \
@@ -43,7 +44,12 @@ Your data you wish to backup
 Mount your borg backup repository here
 #### /root/.ssh
 Mount either your own .ssh here or create a new one with ssh keys in for your remote repo locations
-
+#### /etc/borgmatic.d
+Mount your borgmatic configuration file(s) here. To generate an example configuration, run:
+```
+docker exec borgmatic \
+sh -c "generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
+```
 ### Environment
 
 #### TZ
