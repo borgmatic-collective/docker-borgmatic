@@ -1,0 +1,18 @@
+version: '2'
+services:
+  borgmatic:
+    image: b3vis/borgmatic
+    container_name: borgmatic
+    restart: on-failure:3
+
+    volumes:
+      - /home:/source/home:ro                    # backup source
+      - /mnt/borg:/repository                    # backup target
+      - ./data/.ssh:/root/.ssh/                  # ssh key for remote repositories
+      - ./data/.config/borg:/root/.config/borg   # config and keyfiles
+      - ./data/cron:/config                      # crontab.txt
+      - ./data/borgmatic.d:/etc/borgmatic.d      # borgmatic config file(s)
+      - ./data/.cache/borg:/root/.cache/borg     # checksums used for deduplication 
+
+    environment:
+      BORG_PASSPHRASE: ${BORG_PASSPHRASE}
