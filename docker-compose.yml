@@ -1,0 +1,26 @@
+version: '2'
+services:
+  borgmatic:
+    image: b3vis/borgmatic
+    build:
+      context: .
+    container_name: borgmatic
+    mem_limit: 1024m
+    restart: on-failure:3
+
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+    volumes:
+    # Backup source and target
+      - /home:/srv/source:ro
+      - /mnt/backup:/srv/backup
+      - ./data/.ssh:/root/.ssh/                  # ssh key for remote repositories
+      - ./data/.config/borg:/root/.config/borg   # config and keyfiles
+      - ./data/cron:/config                      # crontab.txt
+      - ./data/borgmatic.d:/etc/borgmatic.d      # borgmatic config file(s)
+      - ./data/.cache/borg:/root/.cache/borg     # checksums used for deduplication 
+
+    environment:
+      TZ: Europe/Berlin
+      BORG_PASSPHRASE: ${BORG_PASSPHRASE}
