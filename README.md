@@ -24,6 +24,14 @@ docker run -d \
   -v /srv/borgmatic/cache:/cache \
   b3vis/borgmatic
 ```
+While the parameters above are sufficient for regular backups, following additional privileges will be needed to mount an archive as FUSE filesystem:
+```
+--cap-add SYS_ADMIN \
+--device /dev/fuse \
+--security-opt label:disable \
+--security-opt apparmor:unconfined
+```
+Depending on your security system, `--security-opt` parameters may not be neccessary. `label:disable` is needed for *SELinux*, while `apparmor:unconfined` is needed for *AppArmor*.
 
 ### Layout
 
