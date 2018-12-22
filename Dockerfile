@@ -1,5 +1,9 @@
 FROM alpine:latest
 MAINTAINER b3vis
+
+ARG BORG_VERSION=1.1.7
+ARG BORGMATIC_VERSION=1.2.11
+
 COPY entry.sh /entry.sh
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
@@ -15,8 +19,8 @@ RUN apk upgrade --no-cache \
     fuse-dev \
     attr-dev \
     && pip3 install --upgrade pip \
-    && pip3 install --upgrade borgbackup \
-    && pip3 install --upgrade borgmatic \
+    && pip3 install --upgrade borgbackup==${BORG_VERSION} \
+    && pip3 install --upgrade borgmatic==${BORGMATIC_VERSION} \
     && pip3 install llfuse \
     && mkdir /config /cache /source /repository /root/.ssh \
     && rm -rf /var/cache/apk/* \
