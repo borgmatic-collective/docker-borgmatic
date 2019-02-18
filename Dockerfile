@@ -1,8 +1,8 @@
 FROM alpine:latest
 MAINTAINER b3vis
 
-ARG BORG_VERSION=1.1.7
-ARG BORGMATIC_VERSION=1.2.11
+ARG BORG_VERSION=1.1.9
+ARG BORGMATIC_VERSION=1.2.15
 
 COPY entry.sh /entry.sh
 RUN apk upgrade --no-cache \
