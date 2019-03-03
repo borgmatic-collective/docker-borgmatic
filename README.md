@@ -5,11 +5,11 @@
 
 A little container I wrote to automate my [Borgbackup](https://github.com/borgbackup)'s using the excellent [Borgmatic](https://github.com/witten/borgmatic).
 
-It uses cron to run the backups at a time you can configure in `crontab.txt`.
+It uses cron to run the backups at a time you can configure in `data/borgmatic.d/crontab.txt`.
 
 ### Usage
 
-You will need to create crontab.txt and your borgmatic config.yml and mount these files into your /config directory. When the container starts it creates the crontab from /config/crontab.txt and starts crond.
+To set your backup timing and configuration, you will need to modify crontab.txt and your borgmatic config.yml and mount these files into the /etc/borgmatic.d/ directory. When the container starts it creates the crontab from `data/borgmatic.d/crontab.txt` and starts crond.
 
 If using remote repositories mount your .ssh to /root/.ssh within the container
 
@@ -34,6 +34,12 @@ While the parameters above are sufficient for regular backups, following additio
 --security-opt apparmor:unconfined
 ```
 Depending on your security system, `--security-opt` parameters may not be neccessary. `label:disable` is needed for *SELinux*, while `apparmor:unconfined` is needed for *AppArmor*.
+
+To init the repo with encryption, run:
+```
+docker exec borgmatic \
+sh -c "borgmatic --init --encryption repokey-blake2"
+```
 
 ### Layout
 #### /mnt/source
