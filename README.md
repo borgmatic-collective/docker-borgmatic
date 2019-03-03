@@ -9,7 +9,7 @@ It uses cron to run the backups at a time you can configure in `data/borgmatic.d
 
 ### Usage
 
-To set your backup timing and configuration, you will need to modify `crontab.txt` and your borgmatic `config.yml` and mount these files into the `/etc/borgmatic.d/` directory. When the container starts it creates the crontab from `crontab.txt` and starts crond.
+To set your backup timing and configuration, you will need to modify [crontab.txt](data/borgmatic.d/crontab.txt) and your borgmatic [config.yaml](data/borgmatic.d/config.yaml) and mount these files into the `/etc/borgmatic.d/` directory. When the container starts it creates the crontab from `crontab.txt` and starts crond.
 
 If using remote repositories mount your .ssh to /root/.ssh within the container
 
