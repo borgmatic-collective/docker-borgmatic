@@ -18,11 +18,11 @@ If using remote repositories mount your .ssh to /root/.ssh within the container
 docker run \
   --detach --name borgmatic \
   -v /home:/mnt/source:ro \
-  -v /var/opt/borg:/mnt/borg-repository \
-  -v /opt/docker/borgmatic/data/borgmatic.d:/etc/borgmatic.d/ \
-  -v /opt/docker/borgmatic/data/.config:/root/.config/borg \
-  -v /opt/docker/borgmatic/data/.ssh:/root/.ssh \
-  -v /opt/docker/borgmatic/data/.cache:/root/.cache/borg \
+  -v /opt/docker/docker-borgmatic/data/repository:/mnt/repository \
+  -v /opt/docker/docker-borgmatic/data/borgmatic.d:/etc/borgmatic.d/ \
+  -v /opt/docker/docker-borgmatic/data/.config:/root/.config/borg \
+  -v /opt/docker/docker-borgmatic/data/.ssh:/root/.ssh \
+  -v /opt/docker/docker-borgmatic/data/.cache:/root/.cache/borg \
   -e TZ=Europe/Berlin \
   b3vis/borgmatic
 ```
@@ -44,7 +44,7 @@ sh -c "borgmatic --init --encryption repokey-blake2"
 ### Layout
 #### /mnt/source
 Your data you wish to backup. For *some* safety you may want to mount read-only. Borgmatic is running as root so all files can be backed up. 
-#### /mnt/borg-repository 
+#### /mnt/repository 
 Mount your borg backup repository here.
 #### /etc/borgmatic.d
 Where you need to create crontab.txt and your borgmatic config.yml
