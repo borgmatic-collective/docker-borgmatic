@@ -9,7 +9,7 @@ It uses cron to run the backups at a time you can configure in `data/borgmatic.d
 
 ### Usage
 
-To set your backup timing and configuration, you will need to modify [crontab.txt](data/borgmatic.d/crontab.txt) and your borgmatic [config.yaml](data/borgmatic.d/config.yaml) and mount these files into the `/etc/borgmatic.d/` directory. When the container starts it creates the crontab from `crontab.txt` and starts crond.
+To set your backup timing and configuration, you will need to create [crontab.txt](data/borgmatic.d/crontab.txt) and your borgmatic [config.yaml](data/borgmatic.d/config.yaml) and mount these files into the `/etc/borgmatic.d/` directory. When the container starts it creates the crontab from `crontab.txt` and starts crond. By cloning this repo in `/opt/docker/`, you will have a working setup to get started. 
 
 If using remote repositories mount your .ssh to /root/.ssh within the container
 
@@ -58,7 +58,7 @@ sh -c "generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
 0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
 ```
 #### /root/.config/borg
-Here your borg config and keyfiles are stored. Make sure to backup your keyfiles when using encryption!
+Here the borg config and keys for keyfile encryption modes are stored. Make sure to backup your keyfiles!
 #### /root/.ssh
 Mount either your own .ssh here or create a new one with ssh keys in for your remote repo locations.
 #### /root/.cache/borg
