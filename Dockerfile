@@ -29,7 +29,6 @@ RUN apk upgrade --no-cache \
     ca-certificates \
     lz4-libs \
     libacl \
-    && mkdir /config /cache /source /repository /root/.ssh \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
 VOLUME /mnt/source
