@@ -12,4 +12,10 @@ services:
       - '/opt/docker/docker-borgmatic/data/.cache:/root/.cache/borg'      # checksums used for deduplication
     environment:
       - TZ=Europe/Berlin
-      
+# Additional privileges needed to mount an archive as FUSE filesystem: 
+#    cap_add:
+#      - SYS_ADMIN
+#
+#    security_opt:
+#      - apparmor:unconfined
+#      - label:disable
