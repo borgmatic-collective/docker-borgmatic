@@ -15,7 +15,8 @@ services:
 # Additional privileges needed to mount an archive as FUSE filesystem: 
 #    cap_add:
 #      - SYS_ADMIN
-#
 #    security_opt:
 #      - apparmor:unconfined
 #      - label:disable
+#    devices:
+#      - /dev/fuse:/dev/fuse
