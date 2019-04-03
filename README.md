@@ -64,5 +64,7 @@ Mount either your own .ssh here or create a new one with ssh keys in for your re
 #### /root/.cache/borg
 A non volatile place to store the borg chunk cache.
 ### Environment
-#### TZ
-You can set TZ to specify a time zone, `Europe/Berlin`.
+- Time zone, e.g. `TZ="Europe/Berlin"'`.
+- SSH parameters, e.g. `BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"`
+- BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"
+- Repository passphrase, e.g. `BORG_PASSPHRASE="DonNotMissToChangeYourPassphrase"`
