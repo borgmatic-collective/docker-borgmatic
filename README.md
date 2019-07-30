@@ -68,3 +68,16 @@ A non volatile place to store the borg chunk cache.
 - SSH parameters, e.g. `BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"`
 - BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"
 - Repository passphrase, e.g. `BORG_PASSPHRASE="DonNotMissToChangeYourPassphrase"`
+
+### Docker Compose
+  - To start the container for backup:
+    1. Set BORG_PASSPHRASE in .env
+    2. Adapt source/target in docker-compose.yml as needed
+    3. Run `docker-compose up -d`
+  - For backup restore: 
+    1. Stop the backup container: `docker-compose down`
+    2. Run an interactive shell: `docker-compose -f docker-compose.yml -f docker-compose.restore.yml run borgmatic`
+    3. Fuse-mount the backup: `borg mount /mnt/repository <mount_point>`
+    4. Restore your files
+    5. Finally unmount and exit: `borg umount <mount_point> && exit`.
+  - In case Borg fails to create/acquire a lock: `borg break-lock /mnt/repository`
