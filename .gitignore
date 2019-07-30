@@ -2,3 +2,4 @@ data/.cache/
 data/.config/
 data/.ssh/
 data/repository/
+.envBORG_PASSPHRASE=ReplaceWithYourSecretPassPhrase
