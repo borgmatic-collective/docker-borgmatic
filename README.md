@@ -20,9 +20,9 @@ docker run \
   -v /home:/mnt/source:ro \
   -v /opt/docker/docker-borgmatic/data/repository:/mnt/repository \
   -v /opt/docker/docker-borgmatic/data/borgmatic.d:/etc/borgmatic.d/ \
-  -v /opt/docker/docker-borgmatic/data/.config:/root/.config/borg \
+  -v /opt/docker/docker-borgmatic/data/.config/borg:/root/.config/borg \
   -v /opt/docker/docker-borgmatic/data/.ssh:/root/.ssh \
-  -v /opt/docker/docker-borgmatic/data/.cache:/root/.cache/borg \
+  -v /opt/docker/docker-borgmatic/data/.cache/borg:/root/.cache/borg \
   -e TZ=Europe/Berlin \
   b3vis/borgmatic
 ```
