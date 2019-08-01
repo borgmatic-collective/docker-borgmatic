@@ -71,9 +71,8 @@ A non volatile place to store the borg chunk cache.
 
 ### Docker Compose
   - To start the container for backup:
-    1. Set BORG_PASSPHRASE in .env
-    2. Adapt source/target in docker-compose.yml as needed
-    3. Run `docker-compose up -d`
+    1. Set BORG_PASSPHRASE and backup source/target in .env
+    2. Run `docker-compose up -d`
   - For backup restore: 
     1. Stop the backup container: `docker-compose down`
     2. Run an interactive shell: `docker-compose -f docker-compose.yml -f docker-compose.restore.yml run borgmatic`
