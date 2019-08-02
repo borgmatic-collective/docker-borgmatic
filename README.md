@@ -11,7 +11,7 @@ It uses cron to run the backups at a time you can configure in `data/borgmatic.d
 
 To set your backup timing and configuration, you will need to create [crontab.txt](data/borgmatic.d/crontab.txt) and your borgmatic [config.yaml](data/borgmatic.d/config.yaml) and mount these files into the `/etc/borgmatic.d/` directory. When the container starts it creates the crontab from `crontab.txt` and starts crond. By cloning this repo in `/opt/docker/`, you will have a working setup to get started. 
 
-If using remote repositories mount your .ssh to /root/.ssh within the container
+If using remote repositories mount your .ssh to /root/.ssh within the container.
 
 ### Example run command
 ```
@@ -70,9 +70,10 @@ A non volatile place to store the borg chunk cache.
 - Repository passphrase, e.g. `BORG_PASSPHRASE="DonNotMissToChangeYourPassphrase"`
 
 ### Docker Compose
-  - To start the container for backup:
-    1. Set BORG_PASSPHRASE and backup source/target in .env
-    2. Run `docker-compose up -d`
+  - Prepare your configuration
+    1. `cp .env.template .env`
+    2. Set your environment and adapt volumes as needed
+  - To start the container for backup: `docker-compose up -d`
   - For backup restore: 
     1. Stop the backup container: `docker-compose down`
     2. Run an interactive shell: `docker-compose -f docker-compose.yml -f docker-compose.restore.yml run borgmatic`
