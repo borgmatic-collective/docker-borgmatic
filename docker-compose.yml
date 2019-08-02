@@ -4,11 +4,12 @@ services:
     image: b3vis/borgmatic
     container_name: borgmatic
     volumes:
-      - '/home:/mnt/source:ro'                                            # backup source
-      - '/opt/docker/docker-borgmatic/data/repository:/mnt/repository'    # backup target
-      - '/opt/docker/docker-borgmatic/data/borgmatic.d:/etc/borgmatic.d/' # borgmatic config file(s) + crontab.txt
-      - '/opt/docker/docker-borgmatic/data/.config:/root/.config/borg'    # config and keyfiles
-      - '/opt/docker/docker-borgmatic/data/.ssh:/root/.ssh'               # ssh key for remote repositories
-      - '/opt/docker/docker-borgmatic/data/.cache:/root/.cache/borg'      # checksums used for deduplication
+      - ${VOLUME_SOURCE}:/mnt/source:ro           # backup source
+      - ${VOLUME_TARGET}:/mnt/repository          # backup target
+      - ${VOLUME_ETC_BORGMATIC}:/etc/borgmatic.d/ # borgmatic config file(s) + crontab.txt
+      - ${VOLUME_BORG_CONFIG}:/root/.config/borg  # config and keyfiles
+      - ${VOLUME_SSH}:/root/.ssh                  # ssh key for remote repositories
+      - ${VOLUME_BORG_CACHE}:/root/.cache/borg    # checksums used for deduplication
     environment:
-      - TZ=Europe/Berlin
+      - TZ=${TZ}
+      - BORG_PASSPHRASE=${BORG_PASSPHRASE}
