@@ -51,7 +51,7 @@ Where you need to create crontab.txt and your borgmatic config.yml
 - To generate an example borgmatic configuration, run:
 ```
 docker exec borgmatic \
-sh -c "generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
+sh -c "cd && generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
 ```
 - crontab.txt example: In this file set the time you wish for your backups to take place default is 1am every day. In here you can add any other tasks you want ran
 ```
