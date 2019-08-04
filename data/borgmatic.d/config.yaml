@@ -2,7 +2,7 @@ location:
     source_directories:
         - /mnt/source
     repositories:
-        - /mnt/repository
+        - /mnt/borg-repository
     one_file_system: true
 
 storage:
