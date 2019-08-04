@@ -18,7 +18,7 @@ If using remote repositories mount your .ssh to /root/.ssh within the container.
 docker run \
   --detach --name borgmatic \
   -v /home:/mnt/source:ro \
-  -v /opt/docker/docker-borgmatic/data/repository:/mnt/repository \
+  -v /opt/docker/docker-borgmatic/data/repository:/mnt/borg-repository \
   -v /opt/docker/docker-borgmatic/data/borgmatic.d:/etc/borgmatic.d/ \
   -v /opt/docker/docker-borgmatic/data/.config/borg:/root/.config/borg \
   -v /opt/docker/docker-borgmatic/data/.ssh:/root/.ssh \
@@ -44,7 +44,7 @@ sh -c "borgmatic --init --encryption repokey-blake2"
 ### Layout
 #### /mnt/source
 Your data you wish to backup. For *some* safety you may want to mount read-only. Borgmatic is running as root so all files can be backed up. 
-#### /mnt/repository 
+#### /mnt/borg-repository
 Mount your borg backup repository here.
 #### /etc/borgmatic.d
 Where you need to create crontab.txt and your borgmatic config.yml
@@ -77,7 +77,7 @@ A non volatile place to store the borg chunk cache.
   - For backup restore: 
     1. Stop the backup container: `docker-compose down`
     2. Run an interactive shell: `docker-compose -f docker-compose.yml -f docker-compose.restore.yml run borgmatic`
-    3. Fuse-mount the backup: `borg mount /mnt/repository <mount_point>`
+    3. Fuse-mount the backup: `borg mount /mnt/borg-repository <mount_point>`
     4. Restore your files
     5. Finally unmount and exit: `borg umount <mount_point> && exit`.
   - In case Borg fails to create/acquire a lock: `borg break-lock /mnt/repository`
