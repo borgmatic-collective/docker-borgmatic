@@ -5,7 +5,7 @@ services:
     container_name: borgmatic
     volumes:
       - ${VOLUME_SOURCE}:/mnt/source:ro           # backup source
-      - ${VOLUME_TARGET}:/mnt/repository          # backup target
+      - ${VOLUME_TARGET}:/mnt/borg-repository     # backup target
       - ${VOLUME_ETC_BORGMATIC}:/etc/borgmatic.d/ # borgmatic config file(s) + crontab.txt
       - ${VOLUME_BORG_CONFIG}:/root/.config/borg  # config and keyfiles
       - ${VOLUME_SSH}:/root/.ssh                  # ssh key for remote repositories
