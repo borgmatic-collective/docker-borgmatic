@@ -2,11 +2,12 @@ location:
     source_directories:
         - /mnt/source
     repositories:
-        - /mnt/repository
+        - /mnt/borg-repository
     one_file_system: true
 
 storage:
-    encryption_passphrase: "DonNotMissToChangeYourPassphrase"
+#   Passphase is set in varibable $BORG_PASSPHRASE
+#   encryption_passphrase: "DonNotMissToChangeYourPassphrase"
     compression: lz4
     archive_name_format: 'backup-{now}'
 
