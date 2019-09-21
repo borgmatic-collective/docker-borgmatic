@@ -1,1 +1,3 @@
+MAILTO=""
+
 0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
