@@ -2,6 +2,7 @@ version: '3'
 services:
   borgmatic:
     image: b3vis/borgmatic
+    env_file: .env
     container_name: borgmatic
     volumes:
       - ${VOLUME_SOURCE}:/mnt/source:ro           # backup source
