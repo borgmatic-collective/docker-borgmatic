@@ -30,9 +30,9 @@ RUN apk upgrade --no-cache \
     lz4-libs \
     libacl \
     msmtp \
+    && ln -sf /usr/bin/msmtp /usr/sbin/sendmail \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
-RUN ln -sf /usr/bin/msmtp /usr/sbin/sendmail
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
 VOLUME /etc/borgmatic.d
