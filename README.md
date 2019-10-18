@@ -15,6 +15,10 @@ To set your backup timing and configuration, you will need to create [crontab.tx
 
 If using remote repositories mount your .ssh to /root/.ssh within the container.
 
+If you want to mail the results from cron:
+* Add your mail relay details to the [env file](.env.template) or mount your own [msmtprc](https://wiki.alpinelinux.org/wiki/Relay_email_to_gmail_(msmtp,_mailx,_sendmail) to `/etc/msmtprc`
+* Add add your mail address to crontag.txt e.g. `MAILTO=log@example.com`
+
 ### Example run command
 ```
 docker run \
@@ -60,7 +64,7 @@ sh -c "cd && generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
 0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
 ```
 #### /root/.config/borg
-Here the borg config and keys for keyfile encryption modes are stored. Make sure to backup your keyfiles!
+Here the borg config and keys for keyfile encryption modes are stored. Make sure to backup your keyfiles! Also needed when encryption is set to none.
 #### /root/.ssh
 Mount either your own .ssh here or create a new one with ssh keys in for your remote repo locations.
 #### /root/.cache/borg
@@ -70,6 +74,12 @@ A non volatile place to store the borg chunk cache.
 - SSH parameters, e.g. `BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"`
 - BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"
 - Repository passphrase, e.g. `BORG_PASSPHRASE="DonNotMissToChangeYourPassphrase"`
+
+- Your mail relay host `MAIL_RELAY_HOST=mail.example.com`
+- Port of your mail relay `MAIL_PORT=587`
+- Username used to log in into your relay service `MAIL_USER=borgmatic_log@example.com`
+- Password for relay login   `MAIL_PASSWORD=SuperS3cretMailPw`
+- From part in your log mail `MAIL_FROM=borgmatic`
 
 ### Docker Compose
   - Prepare your configuration
