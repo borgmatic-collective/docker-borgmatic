@@ -1,7 +1,7 @@
 FROM alpine:latest as builder
 MAINTAINER b3vis
 ARG BORG_VERSION=1.1.10
-ARG BORGMATIC_VERSION=1.3.14
+ARG BORGMATIC_VERSION=1.4.0
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
     alpine-sdk \
@@ -30,6 +30,7 @@ RUN apk upgrade --no-cache \
     lz4-libs \
     libacl \
     msmtp \
+    postgresql-client \
     && ln -sf /usr/bin/msmtp /usr/sbin/sendmail \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
