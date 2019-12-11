@@ -26,6 +26,7 @@ RUN apk upgrade --no-cache \
     sshfs \
     python3 \
     openssl \
+    fuse \
     ca-certificates \
     lz4-libs \
     libacl \
