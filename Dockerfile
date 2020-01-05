@@ -32,6 +32,7 @@ RUN apk upgrade --no-cache \
     libacl \
     msmtp \
     postgresql-client \
+    mariadb-client \
     && ln -sf /usr/bin/msmtp /usr/sbin/sendmail \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
