@@ -101,7 +101,21 @@ Where you can map your own `ntfy.yml` config to have Borgmatic send notification
   - In case Borg fails to create/acquire a lock: `borg break-lock /mnt/repository`
 
 ### ntfy
-I've decided to add [ntfy](https://github.com/dschep/ntfy) to this container to be able to recive push notifications regarding backups within Borgmatic.
+I've decided to create a branch of this container which has [ntfy](https://github.com/dschep/ntfy) added to be able to recive push notifications regarding backups within Borgmatic.
+
+To use this version of the container suffix a version tag with `-ntfy` in your `docker-compose.yml`
+
+e.g
+
+```
+version: '3'
+services:
+  borgmatic:
+    image: b3vis/borgmatic:v1.1.10-1.4.21-ntfy
+    env_file: .env
+    container_name: borgmatic
+
+```
 
 Mount your own `ntfy.yml` to `/root/.config/ntfy/ntfy.yml` to set your backends for ntfy. Alternatively you can interactively send notifications via a command with API keys in line. I've opted to just map my own `ntfy.yml`
 
