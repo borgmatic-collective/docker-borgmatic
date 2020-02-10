@@ -73,8 +73,7 @@ Here the borg config and keys for keyfile encryption modes are stored. Make sure
 Mount either your own .ssh here or create a new one with ssh keys in for your remote repo locations.
 #### /root/.cache/borg
 A non-volatile place to store the borg chunk cache.
-#### /root/.config/ntfy
-Where you can map your own `ntfy.yml` config to have Borgmatic send notifications
+
 ### Environment
 - Time zone, e.g. `TZ="Europe/Berlin"'`.
 - SSH parameters, e.g. `BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"`
@@ -99,25 +98,6 @@ Where you can map your own `ntfy.yml` config to have Borgmatic send notification
     4. Restore your files
     5. Finally unmount and exit: `borg umount <mount_point> && exit`.
   - In case Borg fails to create/acquire a lock: `borg break-lock /mnt/repository`
-
-### ntfy
-I've decided to create a branch of this container which has [ntfy](https://github.com/dschep/ntfy) added to be able to recive push notifications regarding backups within Borgmatic.
-
-To use this version of the container suffix a version tag with `-ntfy` in your `docker-compose.yml`
-
-e.g
-
-```
-version: '3'
-services:
-  borgmatic:
-    image: b3vis/borgmatic:v1.1.10-1.4.21-ntfy
-    env_file: .env
-    container_name: borgmatic
-
-```
-
-Mount your own `ntfy.yml` to `/root/.config/ntfy/ntfy.yml` to set your backends for ntfy. Alternatively you can interactively send notifications via a command with API keys in line. I've opted to just map my own `ntfy.yml`
 
 #### Example for your borgmatic config.yml
 ```
