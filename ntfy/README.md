@@ -15,11 +15,6 @@ To set your backup timing and configuration, you will need to create [crontab.tx
 
 If using remote repositories mount your .ssh to /root/.ssh within the container.
 
-If you want to mail the results from cron:
-* Add your mail relay details to the [env file](.env.template) or mount your own [msmtprc](https://wiki.alpinelinux.org/wiki/Relay_email_to_gmail_(msmtp,_mailx,_sendmail) to `/etc/msmtprc`
-* Add add your mail address to crontag.txt and uncomment the line, e.g. `MAILTO=log@example.com`
-* Please note that logs will no longer end up in Docker logs when MAILTO is set.
-
 ### Example run command
 ```
 docker run \
@@ -80,12 +75,6 @@ Where you can map your own `ntfy.yml` config to have Borgmatic send notification
 - SSH parameters, e.g. `BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"`
 - BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"
 - Repository passphrase, e.g. `BORG_PASSPHRASE="DonNotMissToChangeYourPassphrase"`
-
-- Your mail relay host `MAIL_RELAY_HOST=mail.example.com`
-- Port of your mail relay `MAIL_PORT=587`
-- Username used to log in into your relay service `MAIL_USER=borgmatic_log@example.com`
-- Password for relay login   `MAIL_PASSWORD=SuperS3cretMailPw`
-- From part in your log mail `MAIL_FROM=borgmatic`
 
 ### Docker Compose
   - Prepare your configuration
