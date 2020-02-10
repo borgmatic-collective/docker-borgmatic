@@ -9,8 +9,8 @@ A little container I wrote to automate my [Borgbackup](https://github.com/borgba
 
 This image comes in the three flavours:
 1. [base](./base/README.md) (vanilla), with docker log
-2. [msmtp](./base/README.md), with e-mail notification
-3. [ntfy](./base/README.md), with push notifications
+2. [msmtp](./msmtp/README.md), with e-mail notification
+3. [ntfy](./ntfy/README.md), with push notifications
 
 For general instuctions, see the [base](./base/README.md)
 
