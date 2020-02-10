@@ -1,7 +1,7 @@
 version: '3'
 services:
   borgmatic:
-    image: b3vis/borgmatic
+    image: b3vis/borgmatic:latest-msmtp
     env_file: msmtp.env
     container_name: borgmatic
     volumes:
