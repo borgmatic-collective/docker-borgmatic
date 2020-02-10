@@ -1,0 +1,35 @@
+location:
+    source_directories:
+        - /mnt/source
+    repositories:
+        - /mnt/borg-repository
+    one_file_system: true
+
+storage:
+#   Passphase is set in varibable $BORG_PASSPHRASE
+#   encryption_passphrase: "DonNotMissToChangeYourPassphrase"
+    compression: lz4
+    archive_name_format: 'backup-{now}'
+
+retention:
+    keep_hourly: 2
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 12
+    keep_yearly: 10
+    prefix: 'backup-'
+
+consistency:
+    checks:
+        - repository
+        - archives
+    check_last: 3
+    prefix: 'backup-'
+
+hooks:
+    before_backup:
+        - echo "Starting a backup job."
+    after_backup:
+        - echo "Backup created."
+    on_error:
+        - echo "Error while creating a backup."
