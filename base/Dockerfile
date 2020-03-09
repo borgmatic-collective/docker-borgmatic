@@ -1,7 +1,7 @@
 FROM alpine:latest as builder
 MAINTAINER b3vis
-ARG BORG_VERSION=1.1.10
-ARG BORGMATIC_VERSION=1.4.21
+ARG BORG_VERSION=1.1.11
+ARG BORGMATIC_VERSION=1.5.1
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
     alpine-sdk \
