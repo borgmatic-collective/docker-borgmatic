@@ -4,7 +4,7 @@ RUN apk upgrade --no-cache \
     && apk add --no-cache \
     alpine-sdk \
     python3-dev \
-    # Below this line are requirements for ntfy
+    openssl-dev \
     libffi-dev \
     && pip3 install --upgrade pip \
     && pip3 install --upgrade ntfy[pid,emoji,xmpp,telegram,instapush,slack,rocketchat]
