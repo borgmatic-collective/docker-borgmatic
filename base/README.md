@@ -36,7 +36,7 @@ While the parameters above are sufficient for regular backups, following additio
 --security-opt label:disable \
 --security-opt apparmor:unconfined
 ```
-Depending on your security system, `--security-opt` parameters may not be neccessary. `label:disable` is needed for *SELinux*, while `apparmor:unconfined` is needed for *AppArmor*.
+Depending on your security system, `--security-opt` parameters may not be necessary. `label:disable` is needed for *SELinux*, while `apparmor:unconfined` is needed for *AppArmor*.
 
 To init the repo with encryption, run:
 ```
