@@ -1,7 +1,7 @@
 FROM alpine:latest as builder
-MAINTAINER b3vis
-ARG BORG_VERSION=1.1.11
-ARG BORGMATIC_VERSION=1.5.1
+LABEL mainainer='b3vis'
+ARG BORG_VERSION=1.1.13
+ARG BORGMATIC_VERSION=1.5.8
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
     alpine-sdk \
@@ -18,7 +18,7 @@ RUN apk upgrade --no-cache \
     && pip3 install --upgrade llfuse
 
 FROM alpine:latest
-MAINTAINER b3vis
+LABEL mainainer='b3vis'
 COPY entry.sh /entry.sh
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
