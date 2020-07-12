@@ -6,6 +6,7 @@ RUN apk upgrade --no-cache \
     && apk add --no-cache \
     alpine-sdk \
     python3-dev \
+    py3-pip \
     openssl-dev \
     lz4-dev \
     acl-dev \
