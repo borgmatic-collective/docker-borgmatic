@@ -4,6 +4,7 @@ RUN apk upgrade --no-cache \
     && apk add --no-cache \
     alpine-sdk \
     python3-dev \
+    py3-pip \
     openssl-dev \
     libffi-dev \
     && pip3 install --upgrade pip \
