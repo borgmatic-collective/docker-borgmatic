@@ -1,7 +1,11 @@
 # Borgmatic Container
 <img src="https://github.com/witten/borgmatic/raw/master/docs/static/borgmatic.png" />
-
-[![](https://images.microbadger.com/badges/image/b3vis/borgmatic.svg)](https://microbadger.com/images/b3vis/borgmatic "Get your own image badge on microbadger.com") <img src="https://img.shields.io/docker/pulls/b3vis/borgmatic.svg" />
+<br>
+<img src="https://img.shields.io/github/issues/b3vis/docker-borgmatic" />
+<img src="https://img.shields.io/github/stars/b3vis/docker-borgmatic" />
+<img src="https://img.shields.io/docker/stars/b3vis/borgmatic" />
+<img src="https://img.shields.io/docker/build/b3vis/borgmatic" />
+<img src="https://img.shields.io/docker/pulls/b3vis/borgmatic" />
 
 ### Description
 
