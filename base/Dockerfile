@@ -2,6 +2,7 @@ FROM alpine:latest as builder
 LABEL mainainer='b3vis'
 ARG BORG_VERSION=1.1.14
 ARG BORGMATIC_VERSION=1.5.10
+ARG LLFUSE_VERSION=1.3.6
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
     alpine-sdk \
@@ -13,10 +14,11 @@ RUN apk upgrade --no-cache \
     linux-headers \
     fuse-dev \
     attr-dev \
+    py3-wheel \
     && pip3 install --upgrade pip \
     && pip3 install --upgrade borgbackup==${BORG_VERSION} \
     && pip3 install --upgrade borgmatic==${BORGMATIC_VERSION} \
-    && pip3 install --upgrade llfuse
+    && pip3 install --upgrade llfuse==${LLFUSE_VERSION}
 
 FROM alpine:latest
 LABEL mainainer='b3vis'
