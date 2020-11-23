@@ -40,7 +40,6 @@ RUN apk upgrade --no-cache \
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
 VOLUME /etc/borgmatic.d
-VOLUME /root/.borgmatic
 VOLUME /root/.config/borg
 VOLUME /root/.ssh
 VOLUME /root/.cache/borg

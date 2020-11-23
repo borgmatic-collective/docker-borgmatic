@@ -22,7 +22,6 @@ docker run \
   -v /home:/mnt/source:ro \
   -v /opt/docker/docker-borgmatic/data/repository:/mnt/borg-repository \
   -v /opt/docker/docker-borgmatic/data/borgmatic.d:/etc/borgmatic.d/ \
-  -v /opt/docker/docker-borgmatic/data/.borgmatic:/root/.borgmatic \
   -v /opt/docker/docker-borgmatic/data/.config/borg:/root/.config/borg \
   -v /opt/docker/docker-borgmatic/data/.ssh:/root/.ssh \
   -v /opt/docker/docker-borgmatic/data/.cache/borg:/root/.cache/borg \
@@ -61,7 +60,7 @@ sh -c "cd && generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
 0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
 ```
 #### /root/.borgmatic
-A non-volatile path for borgmatic to store database dumps. Only needed if you are using that feature.
+**Note** this is now redundant and has been deprecated, please remove this from your configs
 #### /root/.config/borg
 Here the borg config and keys for keyfile encryption modes are stored. Make sure to backup your keyfiles! Also needed when encryption is set to none.
 #### /root/.ssh
