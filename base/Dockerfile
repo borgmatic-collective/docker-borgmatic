@@ -35,6 +35,7 @@ RUN apk upgrade --no-cache \
     libacl \
     postgresql-client \
     mariadb-client \
+    curl \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
 VOLUME /mnt/source
