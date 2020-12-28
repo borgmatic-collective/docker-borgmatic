@@ -23,8 +23,7 @@ RUN apk upgrade --no-cache \
 FROM alpine:latest
 LABEL mainainer='b3vis'
 COPY entry.sh /entry.sh
-RUN sed -i -e 's/v[[:digit:]]\..*\//edge\//g' /etc/apk/repositories \
-    && apk upgrade --no-cache \
+RUN apk upgrade --no-cache \
     && apk add --no-cache \
     tzdata \
     sshfs \
