@@ -1,6 +1,6 @@
 FROM alpine:latest as builder
 LABEL mainainer='b3vis'
-ARG BORG_VERSION=1.1.14
+ARG BORG_VERSION=1.1.15
 ARG BORGMATIC_VERSION=1.5.12
 ARG LLFUSE_VERSION=1.3.6
 RUN apk upgrade --no-cache \
@@ -23,7 +23,8 @@ RUN apk upgrade --no-cache \
 FROM alpine:latest
 LABEL mainainer='b3vis'
 COPY entry.sh /entry.sh
-RUN apk upgrade --no-cache \
+RUN sed -i -e 's/v[[:digit:]]\..*\//edge\//g' /etc/apk/repositories \
+    && apk upgrade --no-cache \
     && apk add --no-cache \
     tzdata \
     sshfs \
