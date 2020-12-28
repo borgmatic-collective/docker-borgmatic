@@ -1,4 +1,4 @@
-FROM b3vis/borgmatic:v1.1.14-1.5.10
+FROM b3vis/borgmatic:v1.1.15-1.5.12
 MAINTAINER b3vis
 COPY entry.sh /entry.sh
 RUN apk upgrade --no-cache \
