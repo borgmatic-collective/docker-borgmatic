@@ -1,11 +1,12 @@
 # Borgmatic Container
-<img src="https://github.com/witten/borgmatic/raw/master/docs/static/borgmatic.png" />
-<br>
-<img src="https://img.shields.io/github/issues/b3vis/docker-borgmatic" />
-<img src="https://img.shields.io/github/stars/b3vis/docker-borgmatic" />
-<img src="https://img.shields.io/docker/stars/b3vis/borgmatic" />
-<img src="https://img.shields.io/docker/build/b3vis/borgmatic" />
-<img src="https://img.shields.io/docker/pulls/b3vis/borgmatic" />
+
+![](https://github.com/witten/borgmatic/raw/master/docs/static/borgmatic.png)
+
+[![](https://img.shields.io/github/issues/b3vis/docker-borgmatic)](https://github.com/b3vis/docker-borgmatic/issues)
+[![](https://img.shields.io/github/stars/b3vis/docker-borgmatic)](https://github.com/b3vis/docker-borgmatic/stargazers)
+[![](https://img.shields.io/docker/stars/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
+[![](https://img.shields.io/docker/cloud/build/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
+[![](https://img.shields.io/docker/pulls/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
 
 ### Description
 
