@@ -1,4 +1,4 @@
-FROM b3vis/borgmatic:v1.1.15-1.5.12
+FROM b3vis/borgmatic:v1.1.16-1.5.14
 LABEL mainainer='b3vis'
 COPY entry.sh /entry.sh
 RUN apk upgrade --no-cache \
