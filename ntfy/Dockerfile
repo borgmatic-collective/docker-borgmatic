@@ -1,4 +1,4 @@
-FROM alpine:latest as builder
+FROM alpine:3.13 as builder
 LABEL mainainer='b3vis'
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
