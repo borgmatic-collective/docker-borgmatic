@@ -1,4 +1,5 @@
-FROM alpine:latest as builder
+ARG ARCH=amd64
+FROM ${ARCH}/alpine:3.13 as builder
 MAINTAINER b3vis
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
