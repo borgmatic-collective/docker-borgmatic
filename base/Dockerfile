@@ -1,8 +1,8 @@
 FROM alpine:3.13 as builder
 LABEL mainainer='b3vis'
-ARG BORG_VERSION=1.1.16
-ARG BORGMATIC_VERSION=1.5.14
-ARG LLFUSE_VERSION=1.3.8
+ARG BORG_VERSION=1.1.17
+ARG BORGMATIC_VERSION=1.5.18
+ARG LLFUSE_VERSION=1.4.1
 RUN apk upgrade --no-cache \
     && apk add --no-cache \
     alpine-sdk \
