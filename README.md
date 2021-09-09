@@ -21,4 +21,4 @@ This image comes in the three flavours:
 General instructions can be found in the base image [README](./base/README.md).
 
 ### Additional Reading
-[Backup Docker using Borgmatic](https://www.modem7.com/books/docker-backup/page/backup-docker-using-borgmatic) - Thank you @modem7
+[Backup Docker using Borgmatic](https://www.modem7.com/books/docker-backup/page/backup-docker-using-borgmatic) - Thank you [@modem7](https://github.com/modem7)
