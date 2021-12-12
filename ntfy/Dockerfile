@@ -13,5 +13,5 @@ RUN apk upgrade --no-cache \
 FROM b3vis/borgmatic:v1.1.17-1.5.21
 LABEL mainainer='b3vis'
 VOLUME /root/.config/ntfy
-COPY --from=builder /usr/lib/python3.8/site-packages /usr/lib/python3.8/
+COPY --from=builder /usr/lib/python3.9/site-packages /usr/lib/python3.9/
 COPY --from=builder /usr/bin/ntfy /usr/bin/
