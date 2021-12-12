@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Prepare Base Build 
+      - name: Prepare Base Build
         id: prep_base
         run: |
           DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/borgmatic
@@ -53,7 +53,7 @@ jobs:
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=docker_image::${DOCKER_IMAGE}
 
-      - name: Prepare NTF Build
+      - name: Prepare NTFY Build
         id: prep_ntfy
         run: |
           DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/borgmatic
