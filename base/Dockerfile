@@ -36,6 +36,7 @@ RUN apk upgrade --no-cache \
     postgresql-client \
     mariadb-client \
     curl \
+    mongodb-tools
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
 VOLUME /mnt/source
