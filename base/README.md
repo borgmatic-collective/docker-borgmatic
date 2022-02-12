@@ -15,6 +15,31 @@ To set your backup timing and configuration, you will need to create [crontab.tx
 
 If using remote repositories mount your .ssh to /root/.ssh within the container.
 
+#### Starting and stopping containers from hooks
+
+In case you are using the container to backup docker volumes used by other containers, you might want to make sure that the data is consistent and doesn't change while the backup is running. The easiest way to ensure this is to stop the affected containers before the backup and restart the afterwards. You can use the appropriate borgmatic hooks and [control the docker engine through the API](https://docs.docker.com/engine/api/) using the hosts docker socket.
+
+First mount the docker socket from the host by adding `-v /var/run/docker.sock:/var/run/docker.sock` to your `run` command or in the volume list of your `docker-compose.yml`.
+
+Then use the following example to create the start/stop hooks in the `config.yml` for the containers that you want to control.
+
+```yaml
+hooks:
+    before_backup:
+        - echo "Stopping containers..."
+        - 'echo -ne "POST /v1.41/containers/<container1-name>/stop HTTP/1.1\r\nHost: localhost\r\n\r\n" | nc local:/var/run/docker.sock 80 > /dev/null && echo "Stopped Container 1" || echo "Failed to stop Container 1"'
+        - 'echo -ne "POST /v1.41/containers/<container2-name>/stop HTTP/1.1\r\nHost: localhost\r\n\r\n" | nc local:/var/run/docker.sock 80 > /dev/null && echo "Stopped Container 2" || echo "Failed to stop Container 2"'
+        - echo "Containers stopped."
+        - echo "Starting a backup."
+
+    after_backup:
+        - echo "Finished a backup."
+        - echo "Restarting containers..."
+        - 'echo -ne "POST /v1.41/containers/<container1-name>/stop HTTP/1.1\r\nHost: localhost\r\n\r\n" | nc local:/var/run/docker.sock 80 > /dev/null && echo "Started Container 1" || echo "Failed to start Container 1"'
+        - 'echo -ne "POST /v1.41/containers/<container2-name>/stop HTTP/1.1\r\nHost: localhost\r\n\r\n" | nc local:/var/run/docker.sock 80 > /dev/null && echo "Started Container 2" || echo "Failed to start Container 2"'
+        - echo "Containers restarted."
+```
+
 ### Example run command
 ```
 docker run \

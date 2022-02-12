@@ -10,7 +10,7 @@ For general usage instuctions see the [README](../base/README.md) of the base im
 
 If you want to mail the results from cron:
 * Add your mail relay details to the [msmtp.env](msmtp.env.template) or mount your own [msmtprc](https://wiki.alpinelinux.org/wiki/Relay_email_to_gmail_(msmtp,_mailx,_sendmail) to `/etc/msmtprc`
-* Add add your mail address to crontag.txt and uncomment the line, e.g. `MAILTO=log@example.com`
+* Add your mail address to crontab.txt by editing the line `MAILTO=log@example.com`
 * Please note that logs will no longer end up in Docker logs when MAILTO is set.
 
 ### Environment

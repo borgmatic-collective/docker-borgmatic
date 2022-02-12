@@ -1,7 +1,7 @@
 version: '3'
 services:
   borgmatic:
-    image: b3vis/borgmatic
+    image: b3vis/borgmatic:ntfy
     container_name: borgmatic
     volumes:
       - ${VOLUME_SOURCE}:/mnt/source:ro           # backup source
@@ -10,6 +10,7 @@ services:
       - ${VOLUME_BORG_CONFIG}:/root/.config/borg  # config and keyfiles
       - ${VOLUME_SSH}:/root/.ssh                  # ssh key for remote repositories
       - ${VOLUME_BORG_CACHE}:/root/.cache/borg    # checksums used for deduplication
+      - ${VOLUME_NTFY}:/root/.config/ntfy         # ntfy configuration: https://github.com/dschep/ntfy#configuring-ntfy
     environment:
       - TZ=${TZ}
       - BORG_PASSPHRASE=${BORG_PASSPHRASE}
