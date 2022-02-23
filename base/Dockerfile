@@ -1,6 +1,6 @@
 FROM alpine:3.15 as builder
 LABEL mainainer='b3vis'
-ARG BORG_VERSION=1.1.17
+ARG BORG_VERSION=1.20
 ARG BORGMATIC_VERSION=1.5.23
 ARG LLFUSE_VERSION=1.4.1
 RUN apk upgrade --no-cache \
