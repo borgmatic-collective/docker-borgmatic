@@ -13,7 +13,8 @@ docker-borgmatic/
 │   ├── data
 │   │   └── borgmatic.d
 │   │       ├── config.yml             # same as in base
-│   │       └── crontab.txt            # with mailto
+│   │       ├── crontab.txt            # with mailto
+│   │       ├── mailenv.sh
 │   │       └── msmtprc.sh
 │   ├── docker-compose.yml             # image: b3vis/borgmatic:latest-msmtp, env: msmtp.env
 │   ├── Dockerfile                     # FROM b3vis/borgmatic:${VERSION}
