@@ -1,22 +1,41 @@
-# mail notification for Borgmatic Container 
+# E-Mail notifications for docker-borgmatic 
 
 ### Description
 
-This image adds mail notification with [msmtp](https://marlam.de/msmtp/) to the docker-bormatic.
+This image adds e-mail notifications with [msmtp](https://marlam.de/msmtp/) to
+the docker-borgmatic container.
 
 ### Usage
 
-For general usage instuctions see the [README](../base/README.md) of the base image.
+For general usage instructions see the [README](../base/README.md) of the base
+image.
 
-If you want to mail the results from cron:
-* Add your mail relay details to the [msmtp.env](msmtp.env.template) or mount your own [msmtprc](https://wiki.alpinelinux.org/wiki/Relay_email_to_gmail_(msmtp,_mailx,_sendmail) to `/etc/msmtprc`
-* Add your mail address to crontab.txt by editing the line `MAILTO=log@example.com`
-* Please note that logs will no longer end up in Docker logs when MAILTO is set.
+To setup e-mail notifications follow these steps:
+
+* Add your mail relay details to the [msmtp.env](msmtp.env.template). See
+  the list of environment variables below.
+* Restart the container to apply the changes.
+
+For those who update the image from `v1.1.17-1.5.23` or below, you might want to
+migrate to the new e-mail notification script that provides you proper subject
+lines and adds further possibilities to use the environment for configuration:
+
+* Remove the `MAILTO` from your `crontab.txt`.
+* Edit your `crontab.txt` to match the [upstream file](data/borgmatic.d/crontab.txt).
+* Add the [`env.sh`](data/borgmatic.d/env.sh) and
+  `run.sh`(data/borgmatic.d/run.sh).
+* Extend the environment in `msmtp.env` to contain `MAIL_TO` and `MAIL_SUBJECT`.
 
 ### Environment
-Set your mail configuration in `msmtp.env`
-- Your mail relay host `MAIL_RELAY_HOST=mail.example.com`
-- Port of your mail relay `MAIL_PORT=587`
-- Username used to log in into your relay service `MAIL_USER=borgmatic_log@example.com`
-- Password for relay login   `MAIL_PASSWORD=SuperS3cretMailPw`
-- From part in your log mail `MAIL_FROM=borgmatic`
+
+Set your mail configuration in `msmtp.env`:
+
+| Key                | Description                |
+| ------------------ | -------------------------- |
+| `MAIL_RELAY_HOST`  | IP or hostname of the mail relay (SMTP server) |
+| `MAIL_PORT`        | SMTP port of the mail relay |
+| `MAIL_USER`        | Username for SMTP login |
+| `MAIL_PASSWORD`    | Password for SMTP login |
+| `MAIL_FROM`        | From address for e-mail notifications |
+| `MAIL_TO`          | Recipients for e-mail notifications |
+| `MAIL_SUBJECT`     | Subject line for e-mail notifications |

@@ -1,6 +1,7 @@
 #!/bin/sh
 
 cat >/etc/msmtprc << EOF
+# THIS FILE GETS RECREATED AUTOMATICALLY ON CONTAINER STARTUP
 # Set default values for all following accounts.
 defaults
 auth             on

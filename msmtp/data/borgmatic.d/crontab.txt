@@ -1,5 +1,4 @@
 # Set MAILTO, to send crontab output to mail (Instead of docker logs)
 # Comma separate multiple addresses, do not use spaces or quotes
-MAILTO=log@example.com
 
-0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
+0 1 * * * PATH=$PATH:/usr/bin /etc/borgmatic.d/run.sh 2>&1
