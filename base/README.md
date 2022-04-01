@@ -32,6 +32,10 @@ hooks](https://torsion.org/borgmatic/docs/how-to/add-preparation-and-cleanup-ste
 [control the docker engine through the API](https://docs.docker.com/engine/api/) using the hosts
 docker socket.
 
+Please note that you might want to prefer the `*_everything` hooks to the `*_backup` hooks, as
+`after_backup` will not run if the backup fails for any reason (missing disk space, etc.) and
+therefore the containers stay stopped.
+
 First mount the docker socket from the host by adding `-v /var/run/docker.sock:/var/run/docker.sock`
 to your `run` command or in the volume list of your `docker-compose.yml`.
 
@@ -40,14 +44,14 @@ that you want to control.
 
 ```yaml
 hooks:
-    before_backup:
+    before_everything:
         - echo "Stopping containers..."
         - 'echo -ne "POST /v1.41/containers/<container1-name>/stop HTTP/1.1\r\nHost: localhost\r\n\r\n" | nc local:/var/run/docker.sock 80 > /dev/null && echo "Stopped Container 1" || echo "Failed to stop Container 1"'
         - 'echo -ne "POST /v1.41/containers/<container2-name>/stop HTTP/1.1\r\nHost: localhost\r\n\r\n" | nc local:/var/run/docker.sock 80 > /dev/null && echo "Stopped Container 2" || echo "Failed to stop Container 2"'
         - echo "Containers stopped."
         - echo "Starting a backup."
 
-    after_backup:
+    after_everything:
         - echo "Finished a backup."
         - echo "Restarting containers..."
         - 'echo -ne "POST /v1.41/containers/<container1-name>/start HTTP/1.1\r\nHost: localhost\r\n\r\n" | nc local:/var/run/docker.sock 80 > /dev/null && echo "Started Container 1" || echo "Failed to start Container 1"'
