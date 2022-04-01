@@ -27,8 +27,10 @@ If using remote repositories mount your .ssh to /root/.ssh within the container.
 In case you are using the container to backup docker volumes used by other containers, you might
 want to make sure that the data is consistent and doesn't change while the backup is running. The
 easiest way to ensure this is to stop the affected containers before the backup and restart them
-afterwards. You can use the appropriate borgmatic hooks and [control the docker engine through the
-API](https://docs.docker.com/engine/api/) using the hosts docker socket.
+afterwards. You can use the appropriate [borgmatic
+hooks](https://torsion.org/borgmatic/docs/how-to/add-preparation-and-cleanup-steps-to-backups/) and
+[control the docker engine through the API](https://docs.docker.com/engine/api/) using the hosts
+docker socket.
 
 First mount the docker socket from the host by adding `-v /var/run/docker.sock:/var/run/docker.sock`
 to your `run` command or in the volume list of your `docker-compose.yml`.
