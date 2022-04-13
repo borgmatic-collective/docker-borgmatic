@@ -21,9 +21,9 @@ Mount your own `ntfy.yml` to `/root/.config/ntfy/ntfy.yml` to set your backends 
 ```
 hooks:
     before_backup:
-        - ntfy -b pushover -t Borgmatic send "Borgmatic: Backup Starting"
+        - 'ntfy -b pushover -t Borgmatic send "Borgmatic: Backup Starting"'
     after_backup:
-        - ntfy -b pushover -t Borgmatic send "Borgmatic: Backup Finished"
+        - 'ntfy -b pushover -t Borgmatic send "Borgmatic: Backup Finished"'
     on_error:
-        - ntfy -b pushover -t Borgmatic send "Borgmatic: Backup Error!"
+        - 'ntfy -b pushover -t Borgmatic send "Borgmatic: Backup Error!"'
 ```
