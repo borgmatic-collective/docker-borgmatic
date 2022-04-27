@@ -13,12 +13,12 @@
 A little container I wrote to automate my [Borgbackup](https://github.com/borgbackup)'s using the excellent [Borgmatic](https://github.com/witten/borgmatic).
 
 This image comes in the three flavours:
-1. [base](./base/README.md) (vanilla), with docker log
-2. [msmtp](./msmtp/README.md), with e-mail notifications
-3. [ntfy](./ntfy/README.md), with push notifications
+1. [base](./base/) (vanilla), with docker log
+2. [msmtp](./msmtp/), with e-mail notifications
+3. [ntfy](./ntfy/), with push notifications
 
 ### Usage
-General instructions can be found in the base image [README](./base/README.md).
+General instructions can be found in the base image [README](./base/).
 
 ### Additional Reading
 [Backup Docker using Borgmatic](https://www.modem7.com/books/docker-backup/page/backup-docker-using-borgmatic) - Thank you [@modem7](https://github.com/modem7)
