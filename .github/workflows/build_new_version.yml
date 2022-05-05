@@ -90,7 +90,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build_base
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./base
@@ -100,7 +100,7 @@ jobs:
           tags: ${{ steps.prep_base.outputs.tags }}
 
       - name: Build_msmtp
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./msmtp
@@ -110,7 +110,7 @@ jobs:
           tags: ${{ steps.prep_msmtp.outputs.tags }}
 
       - name: Build_ntfy
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./ntfy
