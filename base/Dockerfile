@@ -39,6 +39,7 @@ RUN apk upgrade --no-cache \
     mongodb-tools \
     curl \
     findmnt \
+    logrotate \
     && rm -rf /var/cache/apk/* \
     && chmod 755 /entry.sh
 VOLUME /mnt/source
