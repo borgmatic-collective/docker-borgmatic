@@ -8,3 +8,15 @@ updates:
     schedule:
       # Check for updates to GitHub Actions every weekday
       interval: "daily"
+
+  # Maintain dependencies for Docker
+  - package-ecosystem: "docker" # See documentation for possible values
+    directory: "/base" # Location of package manifests
+    schedule:
+      interval: "daily"
+
+  # Maintain dependencies for PIP
+  - package-ecosystem: "pip"
+    directory: "/base"
+    schedule:
+      interval: "daily"
