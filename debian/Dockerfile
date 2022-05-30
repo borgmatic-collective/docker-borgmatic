@@ -15,6 +15,7 @@ RUN pip3 install --no-cache-dir -U pip==22.1.1 \
     && pip3 install --no-cache-dir -U borgmatic==1.6.1
 
 FROM python:3.9-slim
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
     tzdata \
@@ -31,10 +32,10 @@ RUN apt-get update \
     logrotate \
     && rm -rf /var/lib/apt/lists/*
     # missing: mongodb-tools \
-COPY --from=compiler /usr/lib/python3.9/site-packages /usr/lib/python3.9/
-COPY --from=compiler /usr/bin/borg /usr/bin/
-COPY --from=compiler /usr/bin/borgfs /usr/bin/
-COPY --from=compiler /usr/bin/borgmatic /usr/bin/
-COPY --from=compiler /usr/bin/generate-borgmatic-config /usr/bin/
-COPY --from=compiler /usr/bin/upgrade-borgmatic-config /usr/bin/
-COPY --from=compiler /usr/bin/validate-borgmatic-config /usr/bin/
+COPY --from=compiler /usr/local/lib/python3.9/site-packages /usr/lib/python3.9/
+COPY --from=compiler /usr/local/bin/borg /usr/bin/
+COPY --from=compiler /usr/local/bin/borgfs /usr/bin/
+COPY --from=compiler /usr/local/bin/borgmatic /usr/bin/
+COPY --from=compiler /usr/local/bin/generate-borgmatic-config /usr/bin/
+COPY --from=compiler /usr/local/bin/upgrade-borgmatic-config /usr/bin/
+COPY --from=compiler /usr/local/bin/validate-borgmatic-config /usr/bin/
