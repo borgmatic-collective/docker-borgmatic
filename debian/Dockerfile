@@ -1,7 +1,7 @@
 FROM python:3.9-slim as compiler
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -qq \
-    && apt-get install -qq \
+RUN apt-get update \
+    && apt-get install -y \
     build-essential \
     libfuse-dev fuse \
     libssl-dev libacl1-dev libxxhash-dev libdeflate-dev liblz4-dev libzstd-dev pkg-config \
@@ -14,12 +14,12 @@ RUN pip3 install --no-cache-dir -U pip==22.1.1 \
     && pip3 install --no-cache-dir -U borgmatic==1.6.1
 
 FROM python:3.9-slim
-RUN apt-get update -qq \
-    && apt-get install -qq \
+RUN apt-get update \
+    && apt-get install -y \
     tzdata \
     sshfs \
     openssl \
-    fuse \
+    fuse3 \
     ca-certificates \
     liblz4-1 \
     libacl1 \
