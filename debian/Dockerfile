@@ -1,7 +1,7 @@
 FROM python:3.9-slim as compiler
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install --no-install-recommends -y \
     build-essential \
     libfuse-dev fuse \
     libssl-dev libacl1-dev libxxhash-dev libdeflate-dev liblz4-dev libzstd-dev pkg-config \
@@ -15,7 +15,7 @@ RUN pip3 install --no-cache-dir -U pip==22.1.1 \
 
 FROM python:3.9-slim
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install --no-install-recommends -y \
     tzdata \
     sshfs \
     openssl \
