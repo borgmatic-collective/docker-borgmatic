@@ -4,13 +4,14 @@ services:
     image: b3vis/borgmatic:ntfy
     container_name: borgmatic
     volumes:
-      - ${VOLUME_SOURCE}:/mnt/source:ro           # backup source
-      - ${VOLUME_TARGET}:/mnt/borg-repository     # backup target
-      - ${VOLUME_ETC_BORGMATIC}:/etc/borgmatic.d/ # borgmatic config file(s) + crontab.txt
-      - ${VOLUME_BORG_CONFIG}:/root/.config/borg  # config and keyfiles
-      - ${VOLUME_SSH}:/root/.ssh                  # ssh key for remote repositories
-      - ${VOLUME_BORG_CACHE}:/root/.cache/borg    # checksums used for deduplication
-      - ${VOLUME_NTFY}:/root/.config/ntfy         # ntfy configuration: https://github.com/dschep/ntfy#configuring-ntfy
+      - ${VOLUME_SOURCE}:/mnt/source:ro            # backup source
+      - ${VOLUME_TARGET}:/mnt/borg-repository      # backup target
+      - ${VOLUME_ETC_BORGMATIC}:/etc/borgmatic.d/  # borgmatic config file(s) + crontab.txt
+      - ${VOLUME_BORGMATIC_STATE}:/root/.borgmatic # borgmatic state files
+      - ${VOLUME_BORG_CONFIG}:/root/.config/borg   # config and keyfiles
+      - ${VOLUME_SSH}:/root/.ssh                   # ssh key for remote repositories
+      - ${VOLUME_BORG_CACHE}:/root/.cache/borg     # checksums used for deduplication
+      - ${VOLUME_NTFY}:/root/.config/ntfy          # ntfy configuration: https://github.com/dschep/ntfy#configuring-ntfy
     environment:
       - TZ=${TZ}
       - BORG_PASSPHRASE=${BORG_PASSPHRASE}
