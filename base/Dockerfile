@@ -35,6 +35,8 @@ RUN apk upgrade --no-cache \
     curl \
     findmnt \
     logrotate \
+    bash \
+    bash-completion \
     && rm -rf /var/cache/apk/*
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
@@ -50,4 +52,6 @@ COPY --from=builder /usr/bin/borgmatic /usr/bin/
 COPY --from=builder /usr/bin/generate-borgmatic-config /usr/bin/
 COPY --from=builder /usr/bin/upgrade-borgmatic-config /usr/bin/
 COPY --from=builder /usr/bin/validate-borgmatic-config /usr/bin/
+RUN borgmatic --bash-completion > /usr/share/bash-completion/completions/borgmatic
+RUN echo "source /etc/profile.d/bash_completion.sh" > /root/.bashrc
 CMD ["/entry.sh"]
