@@ -9,12 +9,12 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir -U pip==22.1.1
-RUN pip3 install --no-cache-dir -U pkgconfig==1.5.5
+RUN pip3 install --no-cache-dir -U pkgconfig==1.5.4
 RUN pip3 install --no-cache-dir -U llfuse==1.4.0
 RUN pip3 install --no-cache-dir -U borgbackup==1.2.0
 RUN pip3 install --no-cache-dir -U borgmatic==1.6.1
 
-FROM compiler
+FROM python:3.9-slim
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
