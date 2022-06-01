@@ -15,80 +15,65 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Login to GitHub Container Registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
+      - name: Prepare Base Build Metadata | DockerHub
+        id: meta_base_dockerhub
+        uses: docker/metadata-action@v4
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
+      - name: Prepare Base Build Metadata | GHCR
+        id: meta_base_ghcr
+        uses: docker/metadata-action@v4
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          images: |
+            ghcr.io/borgmatic-collective/docker-borgmatic
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Prepare Base Build | Dockerhub
-        id: prep_base_dockerhub
-        run: |
-          DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/borgmatic
-          TAG="${DOCKER_IMAGE}:latest"
+      - name: Prepare MSMTP Build Metadata | DockerHub
+        id: meta_msmtp_dockerhub
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest-msmtp,enable={{is_default_branch}}
 
-          # Set output parameters.
-          echo ::set-output name=tags::${TAG}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+      - name: Prepare MSMTP Build Metadata | GHCR
+        id: meta_msmtp_ghcr
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/borgmatic-collective/docker-borgmatic
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest-msmtp,enable={{is_default_branch}}
 
-      - name: Prepare Base Build | GHCR
-        id: prep_base_ghcr
-        run: |
-          DOCKER_IMAGE=ghcr.io/borgmatic-collective/docker-borgmatic
-          TAG="${DOCKER_IMAGE}:latest"
+      - name: Prepare NTFY Build Metadata | DockerHub
+        id: meta_nfty_dockerhub
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest-nfty,enable={{is_default_branch}}
 
-          # Set output parameters.
-          echo ::set-output name=tags::${TAG}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-
-      - name: Prepare MSMTP Build | DockerHub
-        id: prep_msmtp_dockerhub
-        run: |
-          DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/borgmatic
-          TAG="${DOCKER_IMAGE}:latest-msmtp"
-
-          # Set output parameters.
-          echo ::set-output name=tags::${TAG}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-
-      - name: Prepare MSMTP Build | GHCR
-        id: prep_msmtp_ghcr
-        run: |
-          DOCKER_IMAGE=ghcr.io/borgmatic-collective/docker-borgmatic
-          TAG="${DOCKER_IMAGE}:latest-msmtp"
-
-          # Set output parameters.
-          echo ::set-output name=tags::${TAG}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-
-      - name: Prepare NTFY Build | DockerHub
-        id: prep_ntfy_dockerhub
-        run: |
-          DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/borgmatic
-          TAG="${DOCKER_IMAGE}:latest-ntfy"
-
-          # Set output parameters.
-          echo ::set-output name=tags::${TAG}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-
-      - name: Prepare NTFY Build | GHCR
-        id: prep_ntfy_ghcr
-        run: |
-          DOCKER_IMAGE=ghcr.io/borgmatic-collective/docker-borgmatic
-          TAG="${DOCKER_IMAGE}:latest-ntfy"
-
-          # Set output parameters.
-          echo ::set-output name=tags::${TAG}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+      - name: Prepare NFTY Build Metadata | GHCR
+        id: meta_nfty_ghcr
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/borgmatic-collective/docker-borgmatic
+          tags: |
+            type=ref,event=branch
+            type=raw,value=latest-nfty,enable={{is_default_branch}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
@@ -99,7 +84,22 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@master
 
-      - name: Build_base
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build base
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -108,10 +108,10 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
           push: true
           tags: |
-            ${{ steps.prep_base_dockerhub.outputs.tags }}
-            ${{ steps.prep_base_ghcr.outputs.tags }}
+            ${{ steps.meta_base_dockerhub.outputs.tags }}
+            ${{ steps.meta_base_ghcr.outputs.tags }}
 
-      - name: Build_msmtp
+      - name: Build msmtp
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -120,10 +120,10 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
           push: true
           tags: |
-            ${{ steps.prep_msmtp_dockerhub.outputs.tags }}
-            ${{ steps.prep_msmtp_ghcr.outputs.tags }}
+            ${{ steps.meta_msmtp_dockerhub.outputs.tags }}
+            ${{ steps.meta_msmtp_ghcr.outputs.tags }}
 
-      - name: Build_ntfy
+      - name: Build ntfy
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -132,5 +132,5 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
           push: true
           tags: |
-            ${{ steps.prep_ntfy_dockerhub.outputs.tags }}
-            ${{ steps.prep_ntfy_ghcr.outputs.tags }}
+            ${{ steps.meta_ntfy_dockerhub.outputs.tags }}
+            ${{ steps.meta_ntfy_ghcr.outputs.tags }}
