@@ -70,7 +70,7 @@ jobs:
             type=raw,value=latest-msmtp,enable={{is_default_branch}}
 
       - name: Prepare NTFY Build Metadata | DockerHub
-        id: meta_nfty_dockerhub
+        id: meta_ntfy_dockerhub
         uses: docker/metadata-action@v4
         with:
           images: |
@@ -81,10 +81,10 @@ jobs:
             type=semver,pattern=nfty-{{version}}
             type=semver,pattern=nfty-{{major}}.{{minor}}
             # set latest tag for default branch
-            type=raw,value=latest-nfty,enable={{is_default_branch}}
+            type=raw,value=latest-ntfy,enable={{is_default_branch}}
 
-      - name: Prepare NFTY Build Metadata | GHCR
-        id: meta_nfty_ghcr
+      - name: Prepare NTFY Build Metadata | GHCR
+        id: meta_ntfy_ghcr
         uses: docker/metadata-action@v4
         with:
           images: |
@@ -92,10 +92,10 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern=nfty-{{version}}
-            type=semver,pattern=nfty-{{major}}.{{minor}}
+            type=semver,pattern=ntfy-{{version}}
+            type=semver,pattern=ntfy-{{major}}.{{minor}}
             # set latest tag for default branch
-            type=raw,value=latest-nfty,enable={{is_default_branch}}
+            type=raw,value=latest-ntfy,enable={{is_default_branch}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
