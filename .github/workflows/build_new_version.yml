@@ -78,8 +78,8 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern=nfty-{{version}}
-            type=semver,pattern=nfty-{{major}}.{{minor}}
+            type=semver,pattern=ntfy-{{version}}
+            type=semver,pattern=ntfy-{{major}}.{{minor}}
             # set latest tag for default branch
             type=raw,value=latest-ntfy,enable={{is_default_branch}}
 
