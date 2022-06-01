@@ -1,4 +1,4 @@
-FROM alpine:3.15 as builder
+FROM alpine:3.16.0 as builder
 LABEL mainainer='b3vis'
 COPY requirements.txt /requirements.txt
 RUN apk upgrade --no-cache \
@@ -16,7 +16,7 @@ RUN apk upgrade --no-cache \
     py3-wheel \
     && pip3 install --no-cache-dir -U -r requirements.txt
 
-FROM alpine:3.15
+FROM alpine:3.16.0
 LABEL mainainer='b3vis'
 COPY --chmod=755 entry.sh /entry.sh
 RUN apk upgrade --no-cache \
