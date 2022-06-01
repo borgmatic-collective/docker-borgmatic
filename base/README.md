@@ -86,7 +86,7 @@ is needed for *SELinux*, while `apparmor:unconfined` is needed for *AppArmor*.
 To init the repo with encryption, run:
 ```
 docker exec borgmatic \
-sh -c "borgmatic --init --encryption repokey-blake2"
+bash -c "borgmatic --init --encryption repokey-blake2"
 ```
 
 ### Layout
@@ -100,7 +100,7 @@ Where you need to create crontab.txt and your borgmatic config.yml
 - To generate an example borgmatic configuration, run:
 ```
 docker exec borgmatic \
-sh -c "cd && generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
+bash -c "cd && generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
 ```
 - crontab.txt example: In this file set the time you wish for your backups to take place default is
   1am every day. In here you can add any other tasks you want ran
@@ -136,3 +136,13 @@ A non-volatile place to store the borg chunk cache.
     4. Restore your files
     5. Finally unmount and exit: `borg umount <mount_point> && exit`.
   - In case Borg fails to create/acquire a lock: `borg break-lock /mnt/repository`
+
+### Example interactive command
+
+If you ever need to run borgmatic manually, for instance to view or recover files, run:
+
+```
+docker exec -it borgmatic bash
+```
+
+Then you can run `borgmatic` directly within that shell.
