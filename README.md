@@ -5,7 +5,6 @@
 [![](https://img.shields.io/github/issues/b3vis/docker-borgmatic)](https://github.com/b3vis/docker-borgmatic/issues)
 [![](https://img.shields.io/github/stars/b3vis/docker-borgmatic)](https://github.com/b3vis/docker-borgmatic/stargazers)
 [![](https://img.shields.io/docker/stars/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
-[![](https://img.shields.io/docker/cloud/build/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
 [![](https://img.shields.io/docker/pulls/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
 
 ### Description
