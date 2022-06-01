@@ -13,85 +13,89 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Prepare Base Build | DockerHub
-        id: prep_base_dockerhub
-        run: |
-          DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/borgmatic
-          VERSION=latest
-          # If this is git tag, use the tag name as a docker tag
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:base-${VERSION},${DOCKER_IMAGE}:base"
-          # If the VERSION looks like a version number, assume that
-          # this is the most recent version of the image and also
-          # tag it 'latest'.
-          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest"
-          fi
-          # Set output parameters.
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+      - name: Prepare Base Build Metadata | DockerHub
+        id: meta_base_dockerhub
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Prepare Base Build | GHCR
-        id: prep_base_ghcr
-        run: |
-          DOCKER_IMAGE=ghcr.io/borgmatic-collective/docker-borgmatic
-          VERSION=latest
-          # If this is git tag, use the tag name as a docker tag
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:base-${VERSION},${DOCKER_IMAGE}:base"
-          # If the VERSION looks like a version number, assume that
-          # this is the most recent version of the image and also
-          # tag it 'latest'.
-          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest"
-          fi
-          # Set output parameters.
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+      - name: Prepare Base Build Metadata | GHCR
+        id: meta_base_ghcr
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/borgmatic-collective/docker-borgmatic
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Prepare MSMTP Build | DockerHub
-        id: prep_msmtp_dockerhub
-        run: |
-          DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/borgmatic
-          VERSION=latest
-          # If this is git tag, use the tag name as a docker tag
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          TAGS="${DOCKER_IMAGE}:msmtp-${VERSION},${DOCKER_IMAGE}:msmtp"
-          # If the VERSION looks like a version number, assume that
-          # this is the most recent version of the image and also
-          # tag it 'latest'.
-          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest-msmtp"
-          fi
-          # Set output parameters.
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+      - name: Prepare MSMTP Build Metadata | DockerHub
+        id: meta_msmtp_dockerhub
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern=msmtp-{{version}}
+            type=semver,pattern=msmtp-{{major}}.{{minor}}
+            # set latest tag for default branch
+            type=raw,value=latest-msmtp,enable={{is_default_branch}}
 
-      - name: Prepare MSMTP Build | GHCR
-        id: prep_msmtp_ghcr
-        run: |
-          DOCKER_IMAGE=ghcr.io/borgmatic-collective/docker-borgmatic
-          VERSION=latest
-          # If this is git tag, use the tag name as a docker tag
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          TAGS="${DOCKER_IMAGE}:msmtp-${VERSION},${DOCKER_IMAGE}:msmtp"
-          # If the VERSION looks like a version number, assume that
-          # this is the most recent version of the image and also
-          # tag it 'latest'.
-          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest-msmtp"
-          fi
-          # Set output parameters.
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+      - name: Prepare MSMTP Build Metadata | GHCR
+        id: meta_msmtp_ghcr
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/borgmatic-collective/docker-borgmatic
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern=msmtp-{{version}}
+            type=semver,pattern=msmtp-{{major}}.{{minor}}
+            # set latest tag for default branch
+            type=raw,value=latest-msmtp,enable={{is_default_branch}}
+
+      - name: Prepare NTFY Build Metadata | DockerHub
+        id: meta_nfty_dockerhub
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern=nfty-{{version}}
+            type=semver,pattern=nfty-{{major}}.{{minor}}
+            # set latest tag for default branch
+            type=raw,value=latest-nfty,enable={{is_default_branch}}
+
+      - name: Prepare NFTY Build Metadata | GHCR
+        id: meta_nfty_ghcr
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/borgmatic-collective/docker-borgmatic
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern=nfty-{{version}}
+            type=semver,pattern=nfty-{{major}}.{{minor}}
+            # set latest tag for default branch
+            type=raw,value=latest-nfty,enable={{is_default_branch}}
 
       - name: Prepare NTFY Build | DockerHub
         id: prep_ntfy_dockerhub
@@ -166,8 +170,8 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
           push: true
           tags: |
-            ${{ steps.prep_base_dockerhub.outputs.tags }}
-            ${{ steps.prep_base_ghcr.outputs.tags }}
+            ${{ steps.meta_base_dockerhub.outputs.tags }}
+            ${{ steps.meta_base_ghcr.outputs.tags }}
 
       - name: Build_msmtp
         uses: docker/build-push-action@v3
@@ -178,8 +182,8 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
           push: true
           tags: |
-            ${{ steps.prep_msmtp_dockerhub.outputs.tags }}
-            ${{ steps.prep_msmtp_ghcr.outputs.tags }}
+            ${{ steps.meta_msmtp_dockerhub.outputs.tags }}
+            ${{ steps.meta_msmtp_ghcr.outputs.tags }}
 
       - name: Build_ntfy
         uses: docker/build-push-action@v3
@@ -190,5 +194,5 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
           push: true
           tags: |
-            ${{ steps.prep_ntfy_dockerhub.outputs.tags }}
-            ${{ steps.prep_ntfy_ghcr.outputs.tags }}
+            ${{ steps.meta_ntfy_dockerhub.outputs.tags }}
+            ${{ steps.meta_ntfy_ghcr.outputs.tags }}
