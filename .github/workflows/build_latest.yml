@@ -30,7 +30,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/borgmatic-collective/docker-borgmatic
+            ghcr.io/borgmatic-collective/borgmatic
           tags: |
             type=ref,event=branch
             type=raw,value=latest,enable={{is_default_branch}}
@@ -50,7 +50,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/borgmatic-collective/docker-borgmatic
+            ghcr.io/borgmatic-collective/borgmatic
           tags: |
             type=ref,event=branch
             type=raw,value=latest-msmtp,enable={{is_default_branch}}
@@ -70,7 +70,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/borgmatic-collective/docker-borgmatic
+            ghcr.io/borgmatic-collective/borgmatic
           tags: |
             type=ref,event=branch
             type=raw,value=latest-ntfy,enable={{is_default_branch}}
