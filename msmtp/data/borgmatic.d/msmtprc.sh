@@ -1,14 +1,16 @@
 #!/bin/sh
 
+source /etc/borgmatic.d/msmtp.env
+
 cat >/etc/msmtprc << EOF
 # THIS FILE GETS RECREATED AUTOMATICALLY ON CONTAINER STARTUP
 # Set default values for all following accounts.
 defaults
 auth             on
 tls              on
-tls_starttls	 on
+tls_starttls     on
 tls_trust_file   /etc/ssl/certs/ca-certificates.crt
-logfile		     /var/log/sendmail.log
+logfile          /var/log/sendmail.log
 
 account	default
 host ${MAIL_RELAY_HOST}
