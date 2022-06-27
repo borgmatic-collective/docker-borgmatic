@@ -8,7 +8,7 @@ RUN apk upgrade --no-cache \
     openssl-dev \
     libffi-dev \
     && pip3 install --upgrade pip \
-    && pip3 install --upgrade ntfy[pid,emoji,xmpp,telegram,instapush,slack,rocketchat]
+    && pip3 install --upgrade ntfy[pid,emoji,xmpp,telegram,instapush,slack,rocketchat,matrix]
 
 FROM b3vis/borgmatic:latest
 LABEL mainainer='b3vis'
