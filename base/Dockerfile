@@ -25,7 +25,9 @@ RUN apk update && apk add --update --no-cache \
     xz-dev \
     sqlite-dev \
     libffi-dev \
-    && pip3 install --no-cache-dir -U -r requirements.txt
+    && python3 -m pip install --no-cache-dir -U pip setuptools wheel
+
+RUN python3 -m pip install -v --no-cache-dir -U -r requirements.txt
 
 FROM alpine:3.16
 LABEL mainainer='b3vis'
