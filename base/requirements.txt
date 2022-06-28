@@ -1,7 +1,7 @@
 --extra-index-url https://borgmatic-collective.github.io/pypi/simple
 
-pip==22.1.2
-llfuse==1.4.2
-borgbackup==1.2.1
 apprise==0.9.9
+borgbackup==1.2.1
 borgmatic==1.6.4
+llfuse==1.4.2
+pip==22.1.2
