@@ -63,5 +63,8 @@ COPY --chmod=755 --from=builder /usr/bin/borgmatic /usr/bin/
 COPY --chmod=755 --from=builder /usr/bin/generate-borgmatic-config /usr/bin/
 COPY --chmod=755 --from=builder /usr/bin/upgrade-borgmatic-config /usr/bin/
 COPY --chmod=755 --from=builder /usr/bin/validate-borgmatic-config /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/markdown_py /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/normalizer /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/apprise /usr/bin/
 RUN borgmatic --bash-completion > /usr/share/bash-completion/completions/borgmatic && echo "source /etc/profile.d/bash_completion.sh" > /root/.bashrc
 CMD ["/entry.sh"]
