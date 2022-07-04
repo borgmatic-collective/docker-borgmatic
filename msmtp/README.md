@@ -12,7 +12,7 @@ image.
 
 To setup e-mail notifications follow these steps:
 
-* Add your mail relay details to the [msmtp.env](msmtp.env.template). See
+* Add your mail relay details to the [msmtp.env](data/borgmatic.d/msmtp.env.template) and place it in the borgmatic.d directory. See
   the list of environment variables below.
 * Restart the container to apply the changes.
 
