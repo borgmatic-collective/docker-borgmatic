@@ -6,9 +6,9 @@ cat >/etc/msmtprc << EOF
 # THIS FILE GETS RECREATED AUTOMATICALLY ON CONTAINER STARTUP
 # Set default values for all following accounts.
 defaults
-auth             on
-tls              on
-tls_starttls     on
+auth             ${MAIL_AUTH_METHOD}
+tls              ${MAIL_TLS}
+tls_starttls     ${MAIL_STARTTLS}
 tls_trust_file   /etc/ssl/certs/ca-certificates.crt
 logfile          /var/log/sendmail.log
 

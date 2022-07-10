@@ -2,7 +2,6 @@ version: '3'
 services:
   borgmatic:
     image: b3vis/borgmatic:msmtp
-    env_file: msmtp.env
     container_name: borgmatic
     volumes:
       - ${VOLUME_SOURCE}:/mnt/source:ro            # backup source
