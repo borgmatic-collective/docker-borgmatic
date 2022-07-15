@@ -12,7 +12,7 @@ image.
 
 To setup e-mail notifications follow these steps:
 
-* Add your mail relay details to the [msmtp.env](data/borgmatic.d/msmtp.env.template) and place it in the borgmatic.d directory. See
+* Add your mail relay details to the [`msmtp.env`](data/borgmatic.d/msmtp.env.template) and place it in the borgmatic.d directory. See
   the list of environment variables below.
 * Restart the container to apply the changes.
 
@@ -22,11 +22,11 @@ lines and adds further possibilities to use the environment for configuration:
 
 * Remove the `MAILTO` from your `crontab.txt`.
 * Edit your `crontab.txt` to match the [upstream file](data/borgmatic.d/crontab.txt).
-* Extend the environment in `msmtp.env` to contain `MAIL_TO` and `MAIL_SUBJECT`.
+* Extend the environment in [`msmtp.env`](data/borgmatic.d/msmtp.env.template) to contain `MAIL_TO` and `MAIL_SUBJECT`.
 
 ### Environment
 
-Set your mail configuration in `msmtp.env`:
+Set your mail configuration in [`msmtp.env`](data/borgmatic.d/msmtp.env.template):
 
 | Key                | Description                |
 | ------------------ | -------------------------- |
