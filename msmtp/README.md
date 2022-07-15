@@ -22,8 +22,6 @@ lines and adds further possibilities to use the environment for configuration:
 
 * Remove the `MAILTO` from your `crontab.txt`.
 * Edit your `crontab.txt` to match the [upstream file](data/borgmatic.d/crontab.txt).
-* Add the [`env.sh`](data/borgmatic.d/env.sh) and
-  `run.sh`(data/borgmatic.d/run.sh).
 * Extend the environment in `msmtp.env` to contain `MAIL_TO` and `MAIL_SUBJECT`.
 
 ### Environment
