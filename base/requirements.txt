@@ -1,4 +1,6 @@
-pip==22.1.2
-llfuse==1.4.2
+--extra-index-url https://borgmatic-collective.github.io/pypi/simple
+
+apprise==0.9.9
 borgbackup==1.2.1
+llfuse==1.4.2
 borgmatic==1.6.5

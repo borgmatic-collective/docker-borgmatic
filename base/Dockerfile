@@ -1,22 +1,35 @@
-FROM alpine:3.15 as builder
+FROM alpine:3.16.1 as builder
 LABEL mainainer='b3vis'
 COPY requirements.txt /requirements.txt
-RUN apk upgrade --no-cache \
-    && apk add --no-cache \
+# mostly taken from https://github.com/borgbackup/borg/blob/1.1.15/Vagrantfile#L10-L26
+RUN apk update && apk add --update --no-cache \
     alpine-sdk \
-    python3-dev \
-    py3-pip \
+    linux-headers \
     py3-pkgconfig \
+    py3-wheel \
+    py3-xxhash \
+    libxxhash \
+    zstd \
+    py3-setuptools \
+    py3-pip \
+    python3-dev \
     openssl-dev \
     lz4-dev \
     acl-dev \
-    linux-headers \
     fuse-dev \
     attr-dev \
-    py3-wheel \
-    && pip3 install --no-cache-dir -U -r requirements.txt
+    zlib-dev \
+    bzip2-dev \
+    ncurses-dev \
+    readline-dev \
+    xz-dev \
+    sqlite-dev \
+    libffi-dev \
+    && python3 -m pip install --no-cache-dir -U pip setuptools wheel
 
-FROM alpine:3.15
+RUN python3 -m pip install -v --no-cache-dir -U -r requirements.txt
+
+FROM alpine:3.16.1
 LABEL mainainer='b3vis'
 COPY --chmod=755 entry.sh /entry.sh
 RUN apk upgrade --no-cache \
@@ -45,13 +58,15 @@ VOLUME /root/.borgmatic
 VOLUME /root/.config/borg
 VOLUME /root/.ssh
 VOLUME /root/.cache/borg
-COPY --from=builder /usr/lib/python3.9/site-packages /usr/lib/python3.9/
-COPY --from=builder /usr/bin/borg /usr/bin/
-COPY --from=builder /usr/bin/borgfs /usr/bin/
-COPY --from=builder /usr/bin/borgmatic /usr/bin/
-COPY --from=builder /usr/bin/generate-borgmatic-config /usr/bin/
-COPY --from=builder /usr/bin/upgrade-borgmatic-config /usr/bin/
-COPY --from=builder /usr/bin/validate-borgmatic-config /usr/bin/
-RUN borgmatic --bash-completion > /usr/share/bash-completion/completions/borgmatic
-RUN echo "source /etc/profile.d/bash_completion.sh" > /root/.bashrc
+COPY --chmod=755 --from=builder /usr/lib/python3.10/site-packages /usr/lib/python3.10/
+COPY --chmod=755 --from=builder /usr/bin/borg /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/borgfs /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/borgmatic /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/generate-borgmatic-config /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/upgrade-borgmatic-config /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/validate-borgmatic-config /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/markdown_py /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/normalizer /usr/bin/
+COPY --chmod=755 --from=builder /usr/bin/apprise /usr/bin/
+RUN borgmatic --bash-completion > /usr/share/bash-completion/completions/borgmatic && echo "source /etc/profile.d/bash_completion.sh" > /root/.bashrc
 CMD ["/entry.sh"]
