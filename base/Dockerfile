@@ -8,8 +8,6 @@ RUN apk update && apk add --update --no-cache \
     py3-pkgconfig \
     py3-wheel \
     py3-xxhash \
-    libxxhash \
-    zstd \
     py3-setuptools \
     py3-pip \
     python3-dev \
@@ -44,8 +42,6 @@ RUN apk add --update --no-cache \
     sshfs \
     python3 \
     openssl \
-    libxxhash \
-    zstd \
     fuse \
     ca-certificates \
     logrotate \
