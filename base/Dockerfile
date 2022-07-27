@@ -39,7 +39,6 @@ VOLUME /etc/borgmatic.d
 VOLUME /root/.config/borg
 VOLUME /root/.ssh
 VOLUME /root/.cache/borg
-HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 CMD borgmatic --version || exit 1
 RUN apk add --update --no-cache \
     tzdata \
     sshfs \
