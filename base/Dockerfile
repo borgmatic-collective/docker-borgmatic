@@ -1,4 +1,4 @@
-FROM alpine:3.16.2
+FROM python:3.10.5-alpine3.16
 LABEL mainainer='b3vis'
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
