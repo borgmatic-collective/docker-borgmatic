@@ -1,4 +1,4 @@
-FROM python:3.10.5-alpine3.16
+FROM python:3.10.6-alpine3.16
 LABEL mainainer='b3vis'
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
@@ -35,4 +35,3 @@ RUN python3 -m pip install --no-cache -Ur requirements.txt
 RUN borgmatic --bash-completion > /usr/share/bash-completion/completions/borgmatic && echo "source /etc/profile.d/bash_completion.sh" > /root/.bashrc
 
 CMD ["/entry.sh"]
-
