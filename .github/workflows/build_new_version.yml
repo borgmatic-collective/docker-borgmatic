@@ -19,6 +19,8 @@ jobs:
         with:
           images: |
             ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -33,6 +35,8 @@ jobs:
         with:
           images: |
             ghcr.io/borgmatic-collective/borgmatic
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -47,6 +51,8 @@ jobs:
         with:
           images: |
             ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -61,6 +67,8 @@ jobs:
         with:
           images: |
             ghcr.io/borgmatic-collective/borgmatic
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -75,6 +83,8 @@ jobs:
         with:
           images: |
             ${{ secrets.DOCKER_USERNAME }}/borgmatic
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -89,6 +99,8 @@ jobs:
         with:
           images: |
             ghcr.io/borgmatic-collective/borgmatic
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=branch
             type=ref,event=pr
