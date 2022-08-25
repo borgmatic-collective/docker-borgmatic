@@ -19,15 +19,12 @@ jobs:
         with:
           images: |
             ${{ secrets.DOCKER_USERNAME }}/borgmatic
-          flavor: |
-            latest=false
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+            # latest tag is applied automatically for semver type in auto mode
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            # set latest tag for default branch
-            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Prepare Base Build Metadata | GHCR
         id: meta_base_ghcr
@@ -35,15 +32,12 @@ jobs:
         with:
           images: |
             ghcr.io/borgmatic-collective/borgmatic
-          flavor: |
-            latest=false
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+            # latest tag is applied automatically for semver type in auto mode
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            # set latest tag for default branch
-            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Prepare MSMTP Build Metadata | DockerHub
         id: meta_msmtp_dockerhub
@@ -59,7 +53,7 @@ jobs:
             type=semver,pattern=msmtp-{{version}}
             type=semver,pattern=msmtp-{{major}}.{{minor}}
             # set latest tag for default branch
-            type=raw,value=latest-msmtp,enable={{is_default_branch}}
+            type=raw,value=latest-msmtp,enable=true
 
       - name: Prepare MSMTP Build Metadata | GHCR
         id: meta_msmtp_ghcr
@@ -75,7 +69,7 @@ jobs:
             type=semver,pattern=msmtp-{{version}}
             type=semver,pattern=msmtp-{{major}}.{{minor}}
             # set latest tag for default branch
-            type=raw,value=latest-msmtp,enable={{is_default_branch}}
+            type=raw,value=latest-msmtp,enable=true
 
       - name: Prepare NTFY Build Metadata | DockerHub
         id: meta_ntfy_dockerhub
@@ -91,7 +85,7 @@ jobs:
             type=semver,pattern=ntfy-{{version}}
             type=semver,pattern=ntfy-{{major}}.{{minor}}
             # set latest tag for default branch
-            type=raw,value=latest-ntfy,enable={{is_default_branch}}
+            type=raw,value=latest-ntfy,enable=true
 
       - name: Prepare NTFY Build Metadata | GHCR
         id: meta_ntfy_ghcr
@@ -107,7 +101,7 @@ jobs:
             type=semver,pattern=ntfy-{{version}}
             type=semver,pattern=ntfy-{{major}}.{{minor}}
             # set latest tag for default branch
-            type=raw,value=latest-ntfy,enable={{is_default_branch}}
+            type=raw,value=latest-ntfy,enable=true
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
