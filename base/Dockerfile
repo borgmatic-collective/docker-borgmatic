@@ -1,5 +1,5 @@
 FROM python:3.10.6-alpine3.16
-LABEL mainainer='b3vis'
+LABEL maintainer='b3vis'
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
 VOLUME /root/.borgmatic
