@@ -1,4 +1,4 @@
-FROM python:3.10.6-alpine3.16
+FROM alpine:3.16
 LABEL maintainer='b3vis'
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
@@ -8,6 +8,7 @@ VOLUME /root/.config/borg
 VOLUME /root/.ssh
 VOLUME /root/.cache/borg
 RUN apk add --update --no-cache \
+    py3-pip \
     tzdata \
     sshfs \
     openssl \
