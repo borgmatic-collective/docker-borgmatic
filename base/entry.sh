@@ -13,5 +13,21 @@ echo borgmatic $borgmaticver
 echo $borgver
 echo apprise $apprisever
 
+# broadcast signals to crond and borgmatic
+TO_KILL="borgmatic crond"
+graceful_shutdown() {
+  for P in $TO_KILL ; do
+    killall -$1 $P
+    PIDS=$(pgrep $P)
+    [ -n "$PIDS" ] && wait $PIDS
+  done
+}
+
+for s in SIGHUP SIGINT SIGTERM; do
+  trap "graceful_shutdown $s" $s
+done
+
 # Start cron
-/usr/sbin/crond -f -L /dev/stdout
+/usr/sbin/crond -f -L /dev/stdout &
+
+wait
