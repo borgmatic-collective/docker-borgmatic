@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:latest
 
-FROM python:3.10.6-alpine3.16
+FROM python:3.11.0-alpine3.16
 LABEL mainainer='b3vis'
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
