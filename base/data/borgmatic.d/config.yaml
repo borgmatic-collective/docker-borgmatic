@@ -6,8 +6,8 @@ location:
     one_file_system: true
 
 storage:
-#   Passphase is set in varibable $BORG_PASSPHRASE
-#   encryption_passphrase: "DonNotMissToChangeYourPassphrase"
+#   Passphrase is set in variable $BORG_PASSPHRASE
+#   encryption_passphrase: "DoNotMissToChangeYourPassphrase"
     compression: lz4
     archive_name_format: 'backup-{now}'
 

@@ -4,7 +4,7 @@ source /etc/borgmatic.d/msmtp.env
 
 cat >/etc/mailenv << EOF
 # THIS FILE GETS RECREATED AUTOMATICALLY ON CONTAINER STARTUP
-BACKUP_COMMAND="/usr/bin/borgmatic --stats"
+BACKUP_COMMAND="/usr/local/bin/borgmatic --stats"
 MAILTO="${MAIL_TO}"
 MAILSUBJECT="${MAIL_SUBJECT}"
 
