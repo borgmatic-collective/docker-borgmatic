@@ -10,7 +10,7 @@ VOLUME /root/.cache/borg
 RUN apk add --update --no-cache \
     tzdata \
     sshfs \
-    openssl \
+    openssl1.1-compat \
     fuse \
     ca-certificates \
     logrotate \
