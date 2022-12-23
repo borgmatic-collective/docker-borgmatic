@@ -16,8 +16,8 @@ docker-borgmatic/
 │   │       ├── crontab.txt            # with mailto
 │   │       ├── mailenv.sh
 │   │       └── msmtprc.sh
-│   ├── docker-compose.yml             # image: b3vis/borgmatic:latest-msmtp, env: msmtp.env
-│   ├── Dockerfile                     # FROM b3vis/borgmatic:${VERSION}
+│   ├── docker-compose.yml             # image: ghcr.io/borgmatic-collective/borgmatic:latest-msmtp, env: msmtp.env
+│   ├── Dockerfile                     # FROM ghcr.io/borgmatic-collective/borgmatic:${VERSION}
 │   ├── entry.sh                       # starts msmtp in addition
 │   └── README.md                      # describes specifics only
 ├── ntfy
@@ -25,8 +25,8 @@ docker-borgmatic/
 │   │   └── borgmatic.d
 │   │       ├── config.yml             # same as in base
 │   │       └── crontab.txt            # same as in base
-│   ├── docker-compose.yml             # image: b3vis/borgmatic:latest-ntfy
-│   ├── Dockerfile                     # FROM b3vis/borgmatic:${VERSION}
+│   ├── docker-compose.yml             # image: ghcr.io/borgmatic-collective/borgmatic:latest-ntfy
+│   ├── Dockerfile                     # FROM ghcr.io/borgmatic-collective/borgmatic:${VERSION}
 │   ├── entry.sh                       # same as in base
 │   └── README.md                      # describes specifics only
 └── README.md     
