@@ -16,6 +16,9 @@ This image comes in the three flavours:
 2. [msmtp](./msmtp/), with e-mail notifications
 3. [ntfy](./ntfy/), with push notifications
 
+> **Warning**
+> As of 2022-01-29 this image has switched to use [Supercronic](https://github.com/aptible/supercronic) instead of cron from alpine
+
 ### Usage
 General instructions can be found in the base image [README](./base/).
 
