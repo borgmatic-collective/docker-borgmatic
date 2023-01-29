@@ -10,7 +10,7 @@ RUN apk upgrade --no-cache \
     && pip3 install --upgrade pip \
     && pip3 install --upgrade ntfy[pid,emoji,xmpp,telegram,instapush,slack,rocketchat]
 
-FROM b3vis/borgmatic:latest
+FROM ghcr.io/borgmatic-collective/borgmatic:latest
 LABEL mainainer='b3vis'
 VOLUME /root/.config/ntfy
 COPY --from=builder /usr/lib/python3.9/site-packages /usr/lib/python3.9/

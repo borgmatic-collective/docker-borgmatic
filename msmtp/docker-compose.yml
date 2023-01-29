@@ -1,7 +1,7 @@
 version: '3'
 services:
   borgmatic:
-    image: b3vis/borgmatic:msmtp
+    image: ghcr.io/borgmatic-collective/borgmatic:msmtp
     container_name: borgmatic
     volumes:
       - ${VOLUME_SOURCE}:/mnt/source:ro            # backup source

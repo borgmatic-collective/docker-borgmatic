@@ -1,4 +1,4 @@
-FROM b3vis/borgmatic:latest
+FROM ghcr.io/borgmatic-collective/borgmatic:latest
 LABEL mainainer='b3vis'
 COPY entry.sh /entry.sh
 COPY data/scripts /scripts
