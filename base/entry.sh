@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Import your cron file
-/usr/bin/crontab /etc/borgmatic.d/crontab.txt
-
 #Variables
 borgver=$(borg --version)
 borgmaticver=$(borgmatic --version)
@@ -13,5 +10,8 @@ echo borgmatic $borgmaticver
 echo $borgver
 echo apprise $apprisever
 
-# Start cron
-/usr/sbin/crond -f -L /dev/stdout
+# Test crontab
+supercronic -test /etc/borgmatic.d/crontab.txt || exit 1
+
+# Start supercronic
+supercronic /etc/borgmatic.d/crontab.txt
