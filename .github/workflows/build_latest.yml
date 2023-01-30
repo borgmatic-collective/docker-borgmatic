@@ -100,7 +100,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build base
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./base
@@ -112,7 +112,7 @@ jobs:
             ${{ steps.meta_base_ghcr.outputs.tags }}
 
       - name: Build msmtp
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./msmtp
@@ -124,7 +124,7 @@ jobs:
             ${{ steps.meta_msmtp_ghcr.outputs.tags }}
 
       - name: Build ntfy
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./ntfy
