@@ -30,6 +30,7 @@ RUN apk add --update --no-cache \
     bash \
     bash-completion \
     bash-doc \
+    mariadb-connector-c \
     && rm -rf \
     /var/cache/apk/* \
     /.cache
