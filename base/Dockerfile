@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:latest
-FROM golang:1.19.5-alpine3.17 AS gobuilder
+FROM golang:1.20.0-alpine3.17 AS gobuilder
 ARG SUPERCRONIC_VERSION="v0.2.1"
 RUN apk add --no-cache git
 RUN go install github.com/aptible/supercronic@"${SUPERCRONIC_VERSION}"
