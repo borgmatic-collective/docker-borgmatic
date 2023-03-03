@@ -1,10 +1,5 @@
 # syntax = docker/dockerfile:latest
-FROM golang:1.20.0-alpine3.17 AS gobuilder
-ARG SUPERCRONIC_VERSION="v0.2.1"
-RUN apk add --no-cache git
-RUN go install github.com/aptible/supercronic@"${SUPERCRONIC_VERSION}"
-
-FROM python:3.11.1-alpine3.17
+FROM python:3.11.2-alpine3.17
 LABEL maintainer='b3vis'
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
@@ -14,28 +9,29 @@ VOLUME /root/.config/borg
 VOLUME /root/.ssh
 VOLUME /root/.cache/borg
 RUN apk add --update --no-cache \
-    tzdata \
-    sshfs \
-    openssl1.1-compat \
-    fuse \
-    ca-certificates \
-    logrotate \
-    lz4-libs \
-    libacl \
-    postgresql-client \
-    mariadb-client \
-    mongodb-tools \
-    curl \
-    findmnt \
     bash \
     bash-completion \
     bash-doc \
+    ca-certificates \
+    curl \
+    findmnt \
+    fuse \
+    libacl \
+    libxxhash \
+    logrotate \
+    lz4-libs \
+    mariadb-client \
     mariadb-connector-c \
+    mongodb-tools \
+    openssl1.1-compat \
+    postgresql-client \
+    sshfs \
+    supercronic \
+    tzdata \
     && rm -rf \
     /var/cache/apk/* \
     /.cache
 
-COPY --from=gobuilder /go/bin/supercronic /usr/local/bin/
 COPY --chmod=755 entry.sh /entry.sh
 COPY --link requirements.txt /
 
