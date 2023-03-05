@@ -1,4 +1,4 @@
---extra-index-url https://dl.cloudsmith.io/public/borgmatic-collective/borgmatic/python/
+--extra-index-url https://dl.cloudsmith.io/public/borgmatic-collective/borgmatic/python/simple/
 
 apprise==1.2.1
 borgbackup==1.2.3
