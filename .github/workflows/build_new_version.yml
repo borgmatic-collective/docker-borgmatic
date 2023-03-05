@@ -133,7 +133,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./base
           file: ./base/Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ${{ steps.meta_base_dockerhub.outputs.tags }}
@@ -145,7 +145,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./msmtp
           file: ./msmtp/Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ${{ steps.meta_msmtp_dockerhub.outputs.tags }}
@@ -157,7 +157,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./ntfy
           file: ./ntfy/Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ${{ steps.meta_ntfy_dockerhub.outputs.tags }}
