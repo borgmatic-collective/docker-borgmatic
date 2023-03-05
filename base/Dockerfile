@@ -17,7 +17,6 @@ RUN apk add --update --no-cache \
     findmnt \
     fuse \
     libacl \
-    libxxhash \
     logrotate \
     lz4-libs \
     mariadb-client \
