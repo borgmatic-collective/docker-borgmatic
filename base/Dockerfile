@@ -1,12 +1,8 @@
 # syntax = docker/dockerfile:latest
 FROM python:3.11.2-alpine3.17
 LABEL maintainer='github.com/borgmatic-collective'
-VOLUME /mnt/source
-VOLUME /mnt/borg-repository
 VOLUME /root/.borgmatic
-VOLUME /etc/borgmatic.d
 VOLUME /root/.config/borg
-VOLUME /root/.ssh
 VOLUME /root/.cache/borg
 RUN apk add --update --no-cache \
     bash \
