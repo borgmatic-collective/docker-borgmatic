@@ -20,6 +20,7 @@ RUN apk add --update --no-cache \
     mongodb-tools \
     openssl1.1-compat \
     postgresql-client \
+    sqlite \
     sshfs \
     supercronic \
     tzdata \
