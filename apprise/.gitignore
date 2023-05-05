@@ -1,0 +1,5 @@
+data/.cache/
+data/.config/
+data/.ssh/
+data/repository/
+.env
