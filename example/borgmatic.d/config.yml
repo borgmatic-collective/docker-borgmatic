@@ -1,0 +1,44 @@
+# See https://torsion.org/borgmatic/docs/reference/configuration/ for detailed information.
+
+location:
+    source_directories:
+        - /mnt/source
+    exclude_patterns:
+        - /mnt/source/home/*/.cache
+    source_directories_must_exist: true
+
+    repositories:
+        # If you're backing up to a local directory, use this.
+        - /mnt/borg-repository
+
+        # If you're backing up to a remote server, use your remote server's provided URL.
+        #- ssh://mmvz9gp4@mmvz9gp4.repo.borgbase.com/./repo
+
+storage:
+    compression: lz4
+    archive_name_format: 'backup-{now}'
+
+retention:
+    keep_hourly: 0
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 12
+    keep_yearly: 1
+
+consistency:
+    checks:
+        - repository
+        - archives
+    check_last: 3
+    prefix: 'backup-'
+
+hooks:
+    before_backup:
+        - echo "Starting a backup job."
+    after_backup:
+        - echo "Backup created."
+    on_error:
+        - echo "Error while creating a backup."
+
+    # Third-party services to notify you if backups aren't happening; see https://healthchecks.io
+    # healthchecks: https://hc-ping.com/xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx

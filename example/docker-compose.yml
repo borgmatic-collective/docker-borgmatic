@@ -1,0 +1,51 @@
+version: "2.4"
+services:
+  borgmatic:
+    container_name: borgmatic
+
+    image: modem7/borgmatic-docker
+    #build: ../base
+
+    volumes:
+        # -------------
+        # Source and destination directories
+
+        # Mount the directories you want to back up under /mnt/source.
+        # We're mounting them read-only for a little extra safety.
+        - /home:/mnt/source/home:ro
+        - /etc:/mnt/source/etc:ro
+
+        # If you're backing up to a local backup destination, mount it here.
+        # Remove this if you're doing remote backups only.
+        - /mnt/backup:/mnt/borg-repository
+
+        # -------------
+        # Config files that you write
+
+        # Borgmatic and crontab config files will go here.
+        - ./borgmatic.d:/etc/borgmatic.d/
+
+        # If you're using a remote repository, you'll need an SSH key.
+        # Uncomment this if you want to use root's ssh key.
+        #- ~/.ssh:/root/.ssh
+
+        # If you want a separate SSH key just for borg, uncomment this instead, then `ssh-keygen -f ssh/id_rsa`.
+        #- ./ssh:/root/.ssh
+
+        # -------------
+        # Borgmon working space
+        
+        # Borgmon will write config files and keyfiles here (back these up somewhere very safe if you're using encryption! You will need them to restore your backup! If you do not have your keyfile you will not be able to restore your files!)
+        - ./config.borg:/root/.config/borg
+
+        # Borg wants local cache data to track deduplication. Does not need to be backed up, but makes Borg run faster.
+        - ./cache.borg:/root/.cache/borg
+
+    environment:
+        # Change this to your local timezone if you care about when your backups run.
+        - TZ=America/Chicago
+
+        # If you're using a passphrase on your keyfile, make sure this is wrtten somewhere extremely safe. You will also need this to restore your files!
+        #- BORG_PASSPHRASE=SetYourPassphraseHereIfYouWantOne
+
+    restart: unless-stopped
