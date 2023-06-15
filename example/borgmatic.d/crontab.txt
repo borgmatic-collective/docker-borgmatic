@@ -1,2 +1,2 @@
 ## This starts a Borg run every day at 2 in the morning.
-0 2 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
+0 2 * * * PATH=$PATH:/usr/local/bin /usr/local/bin/borgmatic --stats -v 0 2>&1
