@@ -3,7 +3,7 @@ services:
   borgmatic:
     container_name: borgmatic
 
-    image: modem7/borgmatic-docker
+    image: ghcr.io/borgmatic-collective/borgmatic
     #build: ../base
 
     volumes:
