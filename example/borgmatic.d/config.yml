@@ -4,6 +4,7 @@ location:
     source_directories:
         - /mnt/source
     exclude_patterns:
+        # Common location for ephemeral cache files that don't need to be backed up.
         - /mnt/source/home/*/.cache
     source_directories_must_exist: true
 
@@ -12,6 +13,7 @@ location:
         - /mnt/borg-repository
 
         # If you're backing up to a remote server, use your remote server's provided URL.
+        # This URL is an example provided by Borgbase and will not work for you, you'll need your own.
         #- ssh://mmvz9gp4@mmvz9gp4.repo.borgbase.com/./repo
 
 storage:
