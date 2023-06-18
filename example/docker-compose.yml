@@ -11,9 +11,14 @@ services:
         # Source and destination directories
 
         # Mount the directories you want to back up under /mnt/source.
+        # Common suggestions are provided here.
         # We're mounting them read-only for a little extra safety.
-        - /home:/mnt/source/home:ro
-        - /etc:/mnt/source/etc:ro
+        - /home:/mnt/source/home:ro # User home directories.
+        - /etc:/mnt/source/etc:ro # System configuration.
+        #- /var:/mnt/source/var:ro # Variable system data; it's common for databases and Docker volumes to end up here. Probably not necessary unless you're hosting services off this computer.
+        #- /srv:/mnt/source/srv:ro # Another common location for service data, especially websites.
+        #- /media:/mnt/source/media:ro # Common location for mounted external drives or secondary drives. Likely to include USB sticks and CDs, which may be undesirable.
+        #- /data:/mnt/source/data:ro # Less standard but sometimes-seen directory for permanent drive mounts and service data.
 
         # If you're backing up to a local backup destination, mount it here.
         # Remove this if you're doing remote backups only.
