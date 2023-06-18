@@ -40,7 +40,7 @@ services:
         # -------------
         # Borgmon working space
         
-        # Borgmon will write config files and keyfiles here (back these up somewhere very safe if you're using encryption! You will need them to restore your backup! If you do not have your keyfile you will not be able to restore your files!)
+        # Borgmon will write config files and keyfiles here (if you're using encryption, back these up somewhere very safe! You will need them to restore your backup! If you do not have your keyfile you will not be able to restore encrypted files!)
         - ./config.borg:/root/.config/borg
 
         # Borg wants local cache data to track deduplication. Does not need to be backed up, but makes Borg run faster.
