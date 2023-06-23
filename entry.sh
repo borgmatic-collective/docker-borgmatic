@@ -53,4 +53,3 @@ else
     exec borgmatic "$@"
   fi
 fi
-

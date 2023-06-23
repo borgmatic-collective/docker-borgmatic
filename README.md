@@ -1,4 +1,4 @@
-# Borgmatic Container
+# borgmatic Container
 
 ![](https://github.com/witten/borgmatic/raw/main/docs/static/borgmatic.png)
 
@@ -10,7 +10,7 @@
 ## Description ##
 
 
-This repository provides a Docker image for [Borgmatic](https://github.com/witten/borgmatic), a simple and efficient backup tool based on [Borgbackup](https://github.com/borgbackup). The image is designed to make it easy to set up and run Borgmatic (with Borg and optionally Cron daemon) within a Docker container, enabling you to streamline your backup process and ensure the safety of your data.
+This repository provides a Docker image for [borgmatic](https://github.com/witten/borgmatic), a simple and efficient backup tool based on [Borgbackup](https://github.com/borgbackup). The image is designed to make it easy to set up and run borgmatic (with Borg and optionally Cron daemon) within a Docker container, enabling you to streamline your backup process and ensure the safety of your data.
 
 > **Warning**
 > As of 2022-01-29 this image has switched to use [Supercronic](https://github.com/aptible/supercronic) instead of cron from alpine
@@ -53,7 +53,7 @@ See [Other usage methods](#other-usage-methods) below for more options.
 The following volumes are available for mounting:
 | Volume | Description |
 | --- | --- |
-| `/mnt/source` | Your data you wish to backup. For *some* safety you may want to mount read-only. Borgmatic is running as root so all files can be backed up. |
+| `/mnt/source` | Your data you wish to backup. For *some* safety you may want to mount read-only. borgmatic is running as root so all files can be backed up. |
 | `/mnt/borg-repository` | Mount your borg backup repository here. |
 | `/etc/borgmatic.d` | Where you need to create crontab.txt and your borgmatic config.yml |
 | `/root/.borgmatic` | **Note** this is now redundant and has been deprecated, please remove this from your configs |
@@ -83,12 +83,12 @@ You can also provide your own crontab file. If `data/borgmatic.d/crontab.txt` ex
 0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
 ```
 
-Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [Borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables. 
+Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables. 
 
 ## Other usage methods
 
 ### Run borgmatic like a binary through a container
-This image can be used to run borgmatic like a binary by passing the borgmatic command while running the container. It allows you to isolate your system and execute Borgmatic commands without directly installing Borgmatic on your host system and only keeping persistent data.
+This image can be used to run borgmatic like a binary by passing the borgmatic command while running the container. It allows you to isolate your system and execute borgmatic commands without directly installing borgmatic on your host system and only keeping persistent data.
 
 To execute borgmatic commands, you can run your container by passing borgmatic subcommands:
 ```
@@ -122,7 +122,7 @@ sudo ln [-s] /path/to/script/borgmatic-docker.sh /usr/local/bin/borgmatic
 alias borgmatic="sh /path/to/script/borgmatic-docker.sh"
 ```
 
-**Tip** You can view list of available command line options in [Borgmatic's docs](https://torsion.org/borgmatic/docs/reference/command-line/)
+**Tip** You can view list of available command line options in [borgmatic's docs](https://torsion.org/borgmatic/docs/reference/command-line/)
 
 ### Running as daemon
 To keep the container always running for continous backup, you can run it in detached mode. If you do not pass the command, by default it'll start the cron daemon which will run borgmatic at interval set in crontab.txt file.
@@ -250,4 +250,4 @@ bash -c "borgmatic --init --encryption repokey-blake2"
 ```
 
 ### Additional Reading
-[Backup Docker using Borgmatic](https://www.modem7.com/books/docker-backup/page/backup-docker-using-borgmatic) - Thank you [@modem7](https://github.com/modem7)
+[Backup Docker using borgmatic](https://www.modem7.com/books/docker-backup/page/backup-docker-using-borgmatic) - Thank you [@modem7](https://github.com/modem7)
