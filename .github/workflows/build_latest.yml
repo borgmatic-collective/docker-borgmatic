@@ -35,46 +35,6 @@ jobs:
             type=ref,event=branch
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Prepare MSMTP Build Metadata | DockerHub
-        id: meta_msmtp_dockerhub
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ secrets.DOCKER_USERNAME }}/borgmatic
-          tags: |
-            type=ref,event=branch
-            type=raw,value=latest-msmtp,enable={{is_default_branch}}
-
-      - name: Prepare MSMTP Build Metadata | GHCR
-        id: meta_msmtp_ghcr
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ghcr.io/borgmatic-collective/borgmatic
-          tags: |
-            type=ref,event=branch
-            type=raw,value=latest-msmtp,enable={{is_default_branch}}
-
-      - name: Prepare NTFY Build Metadata | DockerHub
-        id: meta_ntfy_dockerhub
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ secrets.DOCKER_USERNAME }}/borgmatic
-          tags: |
-            type=ref,event=branch
-            type=raw,value=latest-ntfy,enable={{is_default_branch}}
-
-      - name: Prepare NTFY Build Metadata | GHCR
-        id: meta_ntfy_ghcr
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ghcr.io/borgmatic-collective/borgmatic
-          tags: |
-            type=ref,event=branch
-            type=raw,value=latest-ntfy,enable={{is_default_branch}}
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
         with:
@@ -103,34 +63,10 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: ./base
-          file: ./base/Dockerfile
+          context: ./
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ${{ steps.meta_base_dockerhub.outputs.tags }}
             ${{ steps.meta_base_ghcr.outputs.tags }}
-
-      - name: Build msmtp
-        uses: docker/build-push-action@v4
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: ./msmtp
-          file: ./msmtp/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ${{ steps.meta_msmtp_dockerhub.outputs.tags }}
-            ${{ steps.meta_msmtp_ghcr.outputs.tags }}
-
-      - name: Build ntfy
-        uses: docker/build-push-action@v4
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: ./ntfy
-          file: ./ntfy/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ${{ steps.meta_ntfy_dockerhub.outputs.tags }}
-            ${{ steps.meta_ntfy_ghcr.outputs.tags }}

@@ -11,12 +11,12 @@ updates:
 
   # Maintain dependencies for Docker
   - package-ecosystem: "docker" # See documentation for possible values
-    directory: "/base" # Location of package manifests
+    directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
 
   # Maintain dependencies for PIP
   - package-ecosystem: "pip"
-    directory: "/base"
+    directory: "/"
     schedule:
       interval: "daily"
