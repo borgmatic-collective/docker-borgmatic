@@ -15,6 +15,9 @@ It uses cron to run the backups at a time you can configure in `data/borgmatic.d
 > **Warning**
 > As of 2022-01-29 this image has switched to use [Supercronic](https://github.com/aptible/supercronic) instead of cron from alpine
 
+> **Warning**
+> As of 2023-06-23 msmtp and ntfy flavors have been discontinued. This image has now switched to apprise.
+
 ### Usage
 
 To set your backup timing and configuration, you will need to create
