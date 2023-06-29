@@ -25,9 +25,9 @@ This repository provides a Docker image for [Borgmatic](https://github.com/witte
 Before proceeding, ensure that you have Docker installed and properly configured on your system. Refer to the Docker documentation for installation instructions specific to your operating system.
 
 #### As binary
-This image can be used to run borgmatic as binary but passing the borgmatic command while running the container. It allows you to isolate your system and execute Borgmatic commands without directly installing Borgmatic on your host system and only keeping persistent data on the host.
+This image can be used to run borgmatic as binary by passing the borgmatic command while running the container. It allows you to isolate your system and execute Borgmatic commands without directly installing Borgmatic on your host system and only keeping persistent data.
 
-To run borgmatic commands, you can run your container by passing borgmatic subcommands:
+To execute borgmatic commands, you can run your container by passing borgmatic subcommands:
 ```
 docker run --rm -it \
 MOUNT_FLAGS_HERE \
@@ -35,7 +35,7 @@ ghcr.io/borgmatic-collective/borgmatic \
 list
 ```
 
-This will execute `borgmatic list` in your container. The idea is to create symlink to a script which executes this commands. Now create a new file `borgmatic-docker.sh` somewhere which executes above command.
+This will execute `borgmatic list` in your container. The idea is to create symlink to a script which executes this. Now create a new file `borgmatic-docker.sh` somewhere like your workspace or home directory.
 ```
 #!/bin/sh
 
@@ -44,9 +44,7 @@ MOUNT_FLAGS_HERE \
 ghcr.io/borgmatic-collective/borgmatic \
 "$@"
 ```
-Modify the above script as per your needs and copy it's path. 
-
-Now you can either create a symbolic link to this script or add it as alias.
+Modify the above script as per your needs and copy it's path. Now you can either create a symbolic link to this script or add it as alias.
 
 1. Create a symlink to a directory that exists in your PATH variable e.g.:
 ```
@@ -59,7 +57,6 @@ sudo ln [-s] /path/to/script/borgmatic-docker.sh /usr/local/bin/borgmatic
 alias borgmatic="sh /path/to/script/borgmatic-docker.sh"
 ```
 
-<!-- TIP -->
 **Tip** You can view list of available command line options in [Borgmatic's docs](https://torsion.org/borgmatic/docs/reference/command-line/)
 
 #### Running as daemon
