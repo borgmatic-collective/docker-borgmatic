@@ -17,16 +17,18 @@ if [ $# -eq 0 ]; then
   # Start supercronic
   if [ -n "${SUPERCRONIC_EXTRA_FLAGS}" ]; then
     echo "The variable SUPERCRONIC_EXTRA_FLAGS is not empty, using extra flags"
-    supercronic $SUPERCRONIC_EXTRA_FLAGS /etc/borgmatic.d/crontab.txt
+    exec supercronic $SUPERCRONIC_EXTRA_FLAGS /etc/borgmatic.d/crontab.txt
   else
     echo "The variable SUPERCRONIC_EXTRA_FLAGS is empty, starting normally"
-    supercronic /etc/borgmatic.d/crontab.txt
+    exec supercronic /etc/borgmatic.d/crontab.txt
   fi
 else
   if [ "$1" = "bash" ] || [ "$1" = "sh" ] || [ "$1" = "/bin/bash" ] || [ "$1" = "/bin/sh" ]; then
+    # Run Shell
     exec "$@"
   else
-    borgmatic "$@"
+    # Run borgmatic with subcommand
+    exec borgmatic "$@"
   fi
 fi
 
