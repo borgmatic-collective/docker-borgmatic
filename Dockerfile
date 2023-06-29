@@ -38,4 +38,4 @@ COPY --link requirements.txt /
 RUN python3 -m pip install --no-cache -Ur requirements.txt
 RUN borgmatic --bash-completion > /usr/share/bash-completion/completions/borgmatic && echo "source /etc/profile.d/bash_completion.sh" > /root/.bashrc
 
-CMD ["/entry.sh"]
+ENTRYPOINT ["/entry.sh"]
