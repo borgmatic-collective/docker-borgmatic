@@ -24,7 +24,7 @@ This repository provides a Docker image for [Borgmatic](https://github.com/witte
 ### Prerequisites
 Before proceeding, ensure that you have Docker installed and properly configured on your system. Refer to the Docker documentation for installation instructions specific to your operating system.
 
-#### As binary
+### As binary
 This image can be used to run borgmatic as binary by passing the borgmatic command while running the container. It allows you to isolate your system and execute Borgmatic commands without directly installing Borgmatic on your host system and only keeping persistent data.
 
 To execute borgmatic commands, you can run your container by passing borgmatic subcommands:
@@ -59,7 +59,7 @@ alias borgmatic="sh /path/to/script/borgmatic-docker.sh"
 
 **Tip** You can view list of available command line options in [Borgmatic's docs](https://torsion.org/borgmatic/docs/reference/command-line/)
 
-#### Running as daemon
+### Running as daemon
 To keep the container always running for continous backup, you can run it in detached mode. If you do not pass the command, by default it'll start the cron daemon which will run borgmatic at interval set in crontab.txt file.
 
 ```
@@ -76,8 +76,52 @@ docker exec -it container_id_or_name bash
 
 Then you can run `borgmatic` directly within that shell.
 
-#### Structure deployment with docker-compose
-TODO:
+### Structure deployment with docker-compose
+<!-- Configure .env -->
+1. Copy `.env.template` to `.env` and edit it to your needs.
+```
+cp .env.template .env
+```
+
+You will need to configure environment variables for volumes. You can also directly configure `docker-compose.yml` file.
+
+Beside these, you can also set other configuration variables in your `.env` file. See [Environment](#environment) section for more details.
+
+2. Start the container
+```
+docker-compose up -d
+```
+
+3. To view logs
+```
+docker-compose logs -f
+```
+
+#### Miscelaneous
+
+If you want to run borgmatic commands using this configuration instead of starting the container as daemon, you can run:
+<!-- TODO: entry.sh is not working with docker-compose, having to pass full command -->
+```
+docker-compose run --rm borgmatic borgmatic list
+```
+
+If a container is already running, you can execute borgmatic commands in it by running:
+```
+docker-compose exec borgmatic ls
+# or to run a shell
+docker-compose exec borgmatic bash
+```
+
+#### Restoring backups
+
+1. Stop the backup container: `docker-compose down`
+2. Modify volume `/host/mount/location` in `docker-compose.restore.yml` file to point to the location where you want to restore your backup.
+3. Run an interactive shell: `docker-compose -f docker-compose.yml -f docker-compose.restore.yml run borgmatic`
+4. Fuse-mount the backup: `borg mount /mnt/borg-repository <mount_point>`
+5. Restore your files
+6. Finally unmount and exit: `borg umount <mount_point> && exit`.
+
+**Tip** In case Borg fails to create/acquire a lock: `borg break-lock /mnt/repository`
 
 
 ### Volumes
@@ -109,6 +153,8 @@ You can set the following environment variables:
 | `TZ` | Time zone, e.g. `TZ="Europe/Berlin"'`. |
 | `BORG_RSH` | SSH parameters, e.g. `BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"` |
 | `BORG_PASSPHRASE` | Repository passphrase, e.g. `BORG_PASSPHRASE="DonNotMissToChangeYourPassphrase"` |
+| `BACKUP_CRON` | Cron schedule to run borgmatic. Default:`0 1 * * *` |
+| `RUN_ON_STARTUP` | Run borgmatic on startup. e.g.: `RUN_ON_STARTUP=true` |
 
 Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [Borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables. 
 
@@ -179,21 +225,6 @@ To init the repo with encryption, run:
 docker exec borgmatic \
 bash -c "borgmatic --init --encryption repokey-blake2"
 ```
-
-### Docker Compose
-  - Prepare your configuration
-    1. `cp .env.template .env`
-    2. Set your environment and adapt volumes as needed
-  - To start the container for backup: `docker-compose up -d`
-  - For backup restore: 
-    1. Stop the backup container: `docker-compose down`
-    2. Run an interactive shell: `docker-compose -f docker-compose.yml -f docker-compose.restore.yml
-       run borgmatic`
-    3. Fuse-mount the backup: `borg mount /mnt/borg-repository <mount_point>`
-    4. Restore your files
-    5. Finally unmount and exit: `borg umount <mount_point> && exit`.
-  - In case Borg fails to create/acquire a lock: `borg break-lock /mnt/repository`
-
 
 ### Additional Reading
 [Backup Docker using Borgmatic](https://www.modem7.com/books/docker-backup/page/backup-docker-using-borgmatic) - Thank you [@modem7](https://github.com/modem7)
