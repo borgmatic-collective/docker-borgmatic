@@ -19,7 +19,7 @@ This repository provides a Docker image for [Borgmatic](https://github.com/witte
 > As of 2023-06-23 msmtp and ntfy flavors have been discontinued. This image has now switched to apprise.
 
 ### Usage
-
+---
 
 ### Prerequisites
 Before proceeding, ensure that you have Docker installed and properly configured on your system. Refer to the Docker documentation for installation instructions specific to your operating system.
@@ -125,6 +125,8 @@ docker-compose exec borgmatic bash
 
 
 ### Volumes
+---
+
 The following volumes are available for mounting:
 | Volume | Description |
 | --- | --- |
@@ -147,6 +149,8 @@ crontab.txt example: In this file set the time you wish for your backups to take
 ```
 
 ### Environment
+---
+
 You can set the following environment variables:
 | Variable | Description |
 | --- | --- |
@@ -158,6 +162,8 @@ You can set the following environment variables:
 
 Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [Borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables. 
 
+### Advanced
+---
 
 #### Starting and stopping containers from hooks
 
