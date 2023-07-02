@@ -7,7 +7,7 @@
 [![](https://img.shields.io/docker/stars/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
 [![](https://img.shields.io/docker/pulls/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
 
-### Description
+## Description ##
 
 
 This repository provides a Docker image for [Borgmatic](https://github.com/witten/borgmatic), a simple and efficient backup tool based on [Borgbackup](https://github.com/borgbackup). The image is designed to make it easy to set up and run Borgmatic (with Borg and optionally Cron daemon) within a Docker container, enabling you to streamline your backup process and ensure the safety of your data.
@@ -18,8 +18,7 @@ This repository provides a Docker image for [Borgmatic](https://github.com/witte
 > **Warning**
 > As of 2023-06-23 msmtp and ntfy flavors have been discontinued. This image has now switched to apprise.
 
-### Usage
----
+## Usage ##
 
 ### Prerequisites
 Before proceeding, ensure that you have Docker installed and properly configured on your system. Refer to the Docker documentation for installation instructions specific to your operating system.
@@ -124,8 +123,7 @@ docker-compose exec borgmatic bash
 **Tip** In case Borg fails to create/acquire a lock: `borg break-lock /mnt/repository`
 
 
-### Volumes
----
+## Volumes ##
 
 The following volumes are available for mounting:
 | Volume | Description |
@@ -148,8 +146,7 @@ crontab.txt example: In this file set the time you wish for your backups to take
 0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
 ```
 
-### Environment
----
+## Environment ##
 
 You can set the following environment variables:
 | Variable | Description |
@@ -162,8 +159,7 @@ You can set the following environment variables:
 
 Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [Borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables. 
 
-### Advanced
----
+## Advanced ##
 
 #### Starting and stopping containers from hooks
 
