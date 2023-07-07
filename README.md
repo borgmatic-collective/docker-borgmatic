@@ -67,9 +67,7 @@ docker exec borgmatic \
 bash -c "cd && generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
 ```
 crontab.txt example: In this file set the time you wish for your backups to take place default is 1am every day. In here you can add any other tasks you want ran
-```
-0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
-```
+
 
 ## Environment ##
 
@@ -81,6 +79,11 @@ You can set the following environment variables:
 | `BORG_PASSPHRASE` | Repository passphrase, e.g. `BORG_PASSPHRASE="DonNotMissToChangeYourPassphrase"` |
 | `BACKUP_CRON` | Cron schedule to run borgmatic. Default:`0 1 * * *` |
 | `RUN_ON_STARTUP` | Run borgmatic on startup. e.g.: `RUN_ON_STARTUP=true` |
+
+You can also provide your own crontab file. If `data/borgmatic.d/crontab.txt` exists, `BACKUP_CRON` will be ignored in preference to it. In here you can add any other tasks you want ran
+```
+0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
+```
 
 Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [Borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables. 
 
