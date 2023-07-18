@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Path
 CRONTAB_PATH="/etc/borgmatic.d/crontab.txt"
