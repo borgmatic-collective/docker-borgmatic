@@ -64,7 +64,7 @@ The following volumes are available for mounting:
 To generate an example borgmatic configuration, run:
 ```
 docker exec borgmatic \
-bash -c "cd && generate-borgmatic-config -d /etc/borgmatic.d/config.yaml"
+bash -c "cd && borgmatic config generate -d /etc/borgmatic.d/config.yaml"
 ```
 
 ## Environment ##
