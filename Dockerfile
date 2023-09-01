@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:latest
-FROM python:3.11.2-alpine3.17
+FROM python:3.11.5-alpine3.17
 LABEL maintainer='github.com/borgmatic-collective'
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
