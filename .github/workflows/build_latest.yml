@@ -17,7 +17,7 @@ jobs:
 
       - name: Prepare Base Build Metadata | DockerHub
         id: meta_base_dockerhub
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ secrets.DOCKER_USERNAME }}/borgmatic
@@ -27,7 +27,7 @@ jobs:
 
       - name: Prepare Base Build Metadata | GHCR
         id: meta_base_ghcr
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ghcr.io/borgmatic-collective/borgmatic
