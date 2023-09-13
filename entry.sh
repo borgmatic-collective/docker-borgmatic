@@ -21,7 +21,7 @@ if [ $# -eq 0 ]; then
   else
     if [ -z "${BACKUP_CRON}" ]; then
       echo "Environment variable BACKUP_CRON is not set, using default value: 0 1 * * *"
-      export BACKUP_CRON="0 0 * * *"
+      export BACKUP_CRON="0 1 * * *"
     else
       echo "Environment variable BACKUP_CRON is set, using value $BACKUP_CRON"
     fi
