@@ -23,11 +23,11 @@ RUN apk add --update --no-cache \
     mariadb-connector-c \
     mongodb-tools \
     openssl1.1-compat \
-    postgresql-client \
     sqlite \
     sshfs \
     supercronic \
     tzdata \
+    && apk add postgresql16-client --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing --no-cache \
     && rm -rf \
     /var/cache/apk/* \
     /.cache
