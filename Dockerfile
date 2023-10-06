@@ -27,7 +27,7 @@ RUN apk add --update --no-cache \
     sshfs \
     supercronic \
     tzdata \
-    && apk add postgresql16-client --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing --no-cache \
+    && apk add postgresql16-client --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main --no-cache \
     && rm -rf \
     /var/cache/apk/* \
     /.cache
