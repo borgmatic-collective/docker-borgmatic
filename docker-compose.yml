@@ -13,4 +13,20 @@ services:
       - ${VOLUME_BORG_CACHE}:/root/.cache/borg     # checksums used for deduplication
     environment:
       - TZ=${TZ}
-      - BORG_PASSPHRASE=${BORG_PASSPHRASE}
+    secrets:
+      - BORG_PASSPHRASE
+      - BORGMATIC_REPO
+      - BORGMATIC_SSH_KEY
+
+# Secrets (https://docs.docker.com/compose/use-secrets/)
+# Any secrets prefixed with BORG will be loaded into the environment when the borgmatic container runs.
+# Generate docker secrets using: echo -n "secret" | docker secret create BORG_PASSPHRASE -
+
+secrets:
+  BORGMATIC_REPO:                                 # borg repository
+    external: true
+  BORG_PASSPHRASE:                                # passphrase for the borg repository
+    external: true
+  BORGMATIC_SSH_KEY:                              # ssh key for remote repositories, stored in a file, loaded by docker secrets
+    external: true
+    file: /some/where/secure/borg_ed25519.key
