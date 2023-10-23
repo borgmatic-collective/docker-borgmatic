@@ -13,6 +13,54 @@ echo borgmatic $borgmaticver
 echo $borgver
 echo apprise $apprisever
 
+# Enable initial debug logging based on the DEBUG_SECRETS environment variable.
+# Logs the initial values of BORG_PASSPHRASE and BORG_PASSPHRASE_FILE.
+if [ "${DEBUG_SECRETS}" = "true" ] || [ "${DEBUG_SECRETS}" = "1" ]; then
+  echo "Before: BORG_PASSPHRASE: ${BORG_PASSPHRASE}"
+  echo "Before: BORG_PASSPHRASE_FILE: ${BORG_PASSPHRASE_FILE}"
+fi
+
+# Loop through all environment variables that start with 'BORG'.
+for var_name in $(set | grep '^BORG' | awk -F= '{print $1}'); do
+  # Retrieve the current value of each environment variable.
+  var_value=$(eval echo \$$var_name)
+
+  # Check if the variable's name ends with '_FILE'.
+  if [[ "$var_name" =~ _FILE$ ]]; then
+    # Strip the '_FILE' suffix to obtain the corresponding variable name.
+    original_var_name=${var_name%_FILE}
+
+    # Retrieve the value of the original environment variable, if it exists.
+    original_var_value=$(eval echo \$$original_var_name)
+
+    # Ensure the *_FILE variable is valid, and the referenced file exists and is not empty.
+    if [ -n "$var_value" ] && [ -s "$var_value" ]; then
+      # Notify user if original variable is being overwritten.
+      if [ -n "$original_var_value" ]; then
+        echo "Note: $original_var_name was already set but is being overwritten by $var_name"
+      fi
+
+      # Update the original variable with the content of the file.
+      export "$original_var_name"=$(cat "$var_value")
+      echo "Setting $original_var_name from the content of $var_value"
+
+      # Unset the *_FILE environment variable.
+      unset "$var_name"
+      echo "Unsetting $var_name"
+    else
+      # Issue an error if the *_FILE variable is not properly set, or the file does not exist or is empty.
+      echo "Error: File $var_value does not exist or is empty."
+    fi
+  fi
+done
+
+# Enable final debug logging based on the DEBUG_SECRETS environment variable.
+# Logs the final values of BORG_PASSPHRASE and BORG_PASSPHRASE_FILE.
+if [ "${DEBUG_SECRETS}" = "true" ] || [ "${DEBUG_SECRETS}" = "1" ]; then
+  echo "After: BORG_PASSPHRASE: ${BORG_PASSPHRASE}"
+  echo "After: BORG_PASSPHRASE_FILE: ${BORG_PASSPHRASE_FILE}"
+fi
+
 if [ $# -eq 0 ]; then
 
   # Allow setting of custom crontab, so check if crontab file exists

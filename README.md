@@ -83,7 +83,13 @@ You can also provide your own crontab file. If `data/borgmatic.d/crontab.txt` ex
 0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
 ```
 
-Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables. 
+Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables.
+
+### Using Secrets (Optional)
+
+You also have the option to use Docker Secrets for more sensitive information. This is not mandatory, but it adds an extra layer of security. **Note that this feature is only applicable to environment variables starting with `BORG`.**
+
+For every environment variable like `BORG_PASSPHRASE`, you can create a corresponding secret file, named as `BORG_PASSPHRASE_FILE`. Place the content of the secret inside this file. The startup script will automatically look for corresponding `_FILE` secrets if the environment variables are not set and load them.
 
 ## Other usage methods
 
