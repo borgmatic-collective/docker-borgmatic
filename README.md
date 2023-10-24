@@ -93,9 +93,7 @@ For every environment variable like `BORG_PASSPHRASE`, you can create a correspo
 
 ## Using Apprise for Notifications
 
-### Introduction
-
-Apprise allows you to send notifications to a multitude of services and is now the recommended way to handle notifications in Borgmatic. This guide will cover how to set up basic email notifications and further options you can explore.
+To enhance your experience with Borgmatic, we'll show you a quick example of how to use Apprise for notifications. Apprise is a versatile tool that integrates with a variety of services and is built into Borgmatic. With the upcoming version 1.8.4 also natively. Here's a quick example of how you can use Apprise.
 
 ### Basic Setup
 
@@ -148,6 +146,41 @@ Apprise allows you to notify multiple services at the same time:
 after_backup:
   - echo "Backup created."
   - apprise -vv -t "✅ SUCCESS" -b "$(cat /tmp/backup_run.log)" "mailto://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com,slack://token@Txxxx/Bxxxx/Cxxxx"
+```
+
+### Native Apprise Configuration in Borgmatic 1.8.4+
+
+Starting from version 1.8.4, Borgmatic has native support for Apprise within its configuration. This makes it even easier to set up notifications. Below is how you can add Apprise directly to your Borgmatic `config.yaml`.
+
+```yaml
+apprise:
+    services:
+        - url: mailto://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com
+          label: mail
+        - url: slack://token@Txxxx/Bxxxx/Cxxxx
+          label: slack
+
+    start:
+        title: ⚙️ Started
+        body: Starting backup process.
+
+    finish:
+        title: ✅ SUCCESS
+        body: Backups successfully made.
+
+    fail:
+        title: ❌ FAILED
+        body: Your backups have failed.
+```
+
+#### Important Note
+
+Just like in the previous configuration, you can use `$(cat /tmp/backup_run.log)` to send log outputs as part of the notification body. Simply replace the `body` value with this variable to include the log in your notifications.
+
+```yaml
+    finish:
+        title: ✅ SUCCESS
+        body: $(cat /tmp/backup_run.log)
 ```
 
 ### Conclusion
