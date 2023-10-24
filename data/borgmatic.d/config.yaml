@@ -1,7 +1,7 @@
 source_directories:
     - /mnt/source
 repositories:
-    - /mnt/borg-repository
+    - path: /mnt/borg-repository
 one_file_system: true
 
 
