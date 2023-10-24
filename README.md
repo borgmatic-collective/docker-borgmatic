@@ -91,6 +91,70 @@ You also have the option to use Docker Secrets for more sensitive information. T
 
 For every environment variable like `BORG_PASSPHRASE`, you can create a corresponding secret file, named as `BORG_PASSPHRASE_FILE`. Place the content of the secret inside this file. The startup script will automatically look for corresponding `_FILE` secrets if the environment variables are not set and load them.
 
+## Using Apprise for Notifications
+
+### Introduction
+
+Apprise allows you to send notifications to a multitude of services and is now the recommended way to handle notifications in Borgmatic. This guide will cover how to set up basic email notifications and further options you can explore.
+
+### Basic Setup
+
+#### Cronjob Configuration
+
+In an unmodified Borgmatic installation, your `cronjob.txt` might look something like this:
+
+```
+0 1 * * * PATH=$PATH:/usr/local/bin /usr/local/bin/borgmatic --stats -v 0 2>&1
+```
+
+To incorporate Apprise notifications, you can modify it like this:
+
+```
+*/5 * * * * PATH=$PATH:/usr/local/bin /usr/local/bin/borgmatic --stats -v 0 > /tmp/backup_run.log
+```
+
+#### Borgmatic Configuration
+
+Add the following lines to your Borgmatic configuration file (`config.yaml`):
+
+```yaml
+before_backup:
+  - echo "Starting a backup job."
+
+after_backup:
+  - echo "Backup created."
+  - apprise -vv -t "✅ SUCCESS" -b "$(cat /tmp/backup_run.log)" "mailtos://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com"
+
+on_error:
+  - echo "Error while creating a backup."
+  - apprise -vv -t "❌ FAILED" -b "$(cat /tmp/backup_run.log)" "mailtos://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com"
+```
+
+##### Note:
+
+If you don't want to send the log file, you can replace `-b "$(cat /tmp/backup_run.log)"` with a custom message like `-b "My message"`.
+
+### Advanced Options
+
+##### Apprise Capabilities
+
+Apprise offers a variety of services to send notifications to, such as Telegram, Slack, Discord, and many more. For a complete list, visit the [Apprise GitHub page](https://github.com/caronc/apprise#productivity-based-notifications).
+
+#### Example for Multiple Services
+
+Apprise allows you to notify multiple services at the same time:
+
+```yaml
+after_backup:
+  - echo "Backup created."
+  - apprise -vv -t "✅ SUCCESS" -b "$(cat /tmp/backup_run.log)" "mailto://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com,slack://token@Txxxx/Bxxxx/Cxxxx"
+```
+
+### Conclusion
+
+Apprise provides a flexible and powerful way to handle notifications in Borgmatic. Be sure to check out the [official Apprise documentation](https://github.com/caronc/apprise#productivity-based-notifications) for a full range of options and capabilities.
+
+
 ## Other usage methods
 
 ### Run borgmatic like a binary through a container
