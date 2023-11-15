@@ -8,7 +8,8 @@ name: Docker
 on:
   push:
     # Publish semver tags as releases.
-    tags: [ '[0-9]' ]
+    tags: 
+      - '[0-9]'
   pull_request:
     branches:
       - 'master'
