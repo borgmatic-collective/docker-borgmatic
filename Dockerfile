@@ -28,6 +28,7 @@ RUN apk add --update --no-cache \
     sshfs \
     supercronic \
     tzdata \
+    awake \
     && rm -rf \
     /var/cache/apk/* \
     /.cache
