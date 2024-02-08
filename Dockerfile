@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:latest
-FROM python:3.11.5-alpine3.18
+FROM python:3.11.7-alpine3.19
 LABEL maintainer='github.com/borgmatic-collective'
 VOLUME /mnt/source
 VOLUME /mnt/borg-repository
@@ -22,12 +22,12 @@ RUN apk add --update --no-cache \
     mariadb-client \
     mariadb-connector-c \
     mongodb-tools \
-    openssl1.1-compat \
+    openssl \
     sqlite \
+    postgresql-client \
     sshfs \
     supercronic \
     tzdata \
-    && apk add postgresql16-client --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main --no-cache \
     && rm -rf \
     /var/cache/apk/* \
     /.cache
