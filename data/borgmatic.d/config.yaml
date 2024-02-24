@@ -1,34 +1,35 @@
-source_directories:
-    - /mnt/source
-repositories:
-    - path: /mnt/borg-repository
-one_file_system: true
+location:
+    source_directories:
+        - /mnt/source
+    repositories:
+        - /mnt/borg-repository
+    one_file_system: true
 
+storage:
+#   Passphase is set in varibable $BORG_PASSPHRASE
+#   encryption_passphrase: "DonNotMissToChangeYourPassphrase"
+    compression: lz4
+    archive_name_format: 'backup-{now}'
 
-#   Passphrase is set in variable $BORG_PASSPHRASE
-#   encryption_passphrase: "DoNotMissToChangeYourPassphrase"
-compression: lz4
-archive_name_format: 'backup-{now}'
+retention:
+    keep_hourly: 2
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 12
+    keep_yearly: 10
+    prefix: 'backup-'
 
+consistency:
+    checks:
+        - repository
+        - archives
+    check_last: 3
+    prefix: 'backup-'
 
-keep_hourly: 2
-keep_daily: 7
-keep_weekly: 4
-keep_monthly: 12
-keep_yearly: 10
-
-
-
-checks:
-    - name: repository
-    - name: archives
-check_last: 3
-
-
-
-before_backup:
-    - echo "Starting a backup job."
-after_backup:
-    - echo "Backup created."
-on_error:
-    - echo "Error while creating a backup."
+hooks:
+    before_backup:
+        - echo "Starting a backup job."
+    after_backup:
+        - echo "Backup created."
+    on_error:
+        - echo "Error while creating a backup."
