@@ -3,7 +3,7 @@
 FROM python:3.12.2-alpine3.19 as base
 ARG TARGETARCH
 
-LABEL maintainer='modem7'
+LABEL maintainer='borgmatic-collective'
 
 FROM base AS base-amd64
 ENV S6_OVERLAY_ARCH=x86_64

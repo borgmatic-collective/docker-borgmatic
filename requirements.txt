@@ -1,4 +1,4 @@
---extra-index-url https://dl.cloudsmith.io/public/modem7/wheels/python/simple/
+--extra-index-url https://dl.cloudsmith.io/public/borgmatic-collective/borgmatic/python/simple/
 
 borgbackup==1.2.7
 borgmatic[apprise]==1.8.8
