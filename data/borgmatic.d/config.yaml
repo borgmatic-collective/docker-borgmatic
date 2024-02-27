@@ -1,30 +1,31 @@
-location:
-    source_directories:
-        - /mnt/source
-    repositories:
-        - /mnt/borg-repository
-    one_file_system: true
+source_directories:
+    - /mnt/source
+repositories:
+    - /mnt/borg-repository
+one_file_system: true
 
-storage:
 #   Passphase is set in varibable $BORG_PASSPHRASE
 #   encryption_passphrase: "DonNotMissToChangeYourPassphrase"
-    compression: lz4
-    archive_name_format: 'backup-{now}'
+compression: lz4
+archive_name_format: 'backup-{now}'
 
-retention:
-    keep_hourly: 2
-    keep_daily: 7
-    keep_weekly: 4
-    keep_monthly: 12
-    keep_yearly: 10
-    prefix: 'backup-'
+keep_hourly: 2
+keep_daily: 7
+keep_weekly: 4
+keep_monthly: 12
+keep_yearly: 10
+prefix: 'backup-'
 
-consistency:
-    checks:
-        - repository
-        - archives
-    check_last: 3
-    prefix: 'backup-'
+
+checks:
+  - name: repository
+    frequency: 2 weeks
+  - name: archives
+    frequency: always
+  - name: extract
+    frequency: 2 weeks
+  - name: data
+    frequency: 1 month
 
 hooks:
     before_backup:
@@ -33,3 +34,13 @@ hooks:
         - echo "Backup created."
     on_error:
         - echo "Error while creating a backup."
+
+before_everything:
+    - echo "Starting a backup job."
+after_everything:
+    - echo "Backup created."
+on_error:
+    - echo "Error while creating a backup."
+
+healthchecks:
+    ping_url: ${BORG_HEALTHCHECK_URL}
