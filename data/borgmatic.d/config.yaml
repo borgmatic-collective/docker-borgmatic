@@ -1,7 +1,7 @@
 source_directories:
     - /mnt/source
 repositories:
-    - /mnt/borg-repository
+    - path: /mnt/borg-repository
 one_file_system: true
 
 #   Passphase is set in varibable $BORG_PASSPHRASE
@@ -14,8 +14,6 @@ keep_daily: 7
 keep_weekly: 4
 keep_monthly: 12
 keep_yearly: 10
-prefix: 'backup-'
-
 
 checks:
   - name: repository
