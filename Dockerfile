@@ -79,6 +79,6 @@ VOLUME /root/.borgmatic
 VOLUME /root/.config/borg
 VOLUME /root/.cache/borg
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 CMD borgmatic --version || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 CMD borgmatic config validate
 
 ENTRYPOINT [ "/init" ]
