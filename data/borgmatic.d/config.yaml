@@ -5,7 +5,7 @@ repositories:
 one_file_system: true
 
 #   Passphase is set in varibable $BORG_PASSPHRASE
-#   encryption_passphrase: "DonNotMissToChangeYourPassphrase"
+#   encryption_passphrase: "DoNotForgetToChangeYourPassphrase"
 compression: lz4
 archive_name_format: 'backup-{now}'
 
