@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if test "$1" -eq 256 ; then
+  e=$((128 + $2))
+else
+  e="$1"
+fi
+
+echo "Received exit code $e."
+echo "$e" > /run/s6-linux-init-container-results/exitcode

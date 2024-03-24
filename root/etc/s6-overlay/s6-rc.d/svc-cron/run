@@ -1,0 +1,115 @@
+#!/usr/bin/with-contenv bash
+
+# Install DockerCLI if true
+if [ "${DOCKERCLI:-}" == "true" ]; then
+  echo "Installing Docker CLI..."
+  apk add -U --quiet docker-cli
+  dockerver=$(docker --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+else
+  dockerver="not installed"
+fi
+
+# Version variables
+borgver=$(borg --version)
+borgmaticver=$(borgmatic --version)
+apprisever=$(apprise --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+pythonver=$(python3 --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+
+# Software versions
+echo "Software Versions:
+-----------------------------------
+apprise $apprisever
+$borgver
+borgmatic $borgmaticver
+dockercli $dockerver
+python $pythonver
+-----------------------------------
+Time Zone: $TZ
+-----------------------------------
+"
+
+# Enable initial debug logging based on the DEBUG_SECRETS environment variable.
+# Logs the initial values of BORG_PASSPHRASE and BORG_PASSPHRASE_FILE.
+if [ "${DEBUG_SECRETS}" = "true" ] || [ "${DEBUG_SECRETS}" = "1" ]; then
+  echo "Before: BORG_PASSPHRASE: ${BORG_PASSPHRASE}"
+  echo "Before: BORG_PASSPHRASE_FILE: ${BORG_PASSPHRASE_FILE}"
+  echo "Before: YOUR_PASSPHRASE: ${YOUR_PASSPHRASE}"
+  echo "Before: YOUR_PASSPHRASE_FILE: ${YOUR_PASSPHRASE_FILE}"
+fi
+
+# Loop through all environment variables that start with 'BORG'.
+for var_name in $(set | grep -E '^BORG|^YOUR' | awk -F= '{print $1}'); do
+  # Retrieve the current value of each environment variable.
+  var_value=$(eval echo \$$var_name)
+
+  # Check if the variable's name ends with '_FILE'.
+  if [[ "$var_name" =~ _FILE$ ]]; then
+    # Strip the '_FILE' suffix to obtain the corresponding variable name.
+    original_var_name=${var_name%_FILE}
+
+    # Retrieve the value of the original environment variable, if it exists.
+    original_var_value=$(eval echo \$$original_var_name)
+
+    # Ensure the *_FILE variable is valid, and the referenced file exists and is not empty.
+    if [ -n "$var_value" ] && [ -s "$var_value" ]; then
+      # Notify user if original variable is being overwritten.
+      if [ -n "$original_var_value" ]; then
+        echo "Note: $original_var_name was already set but is being overwritten by $var_name"
+      fi
+
+      # Update the original variable with the content of the file.
+      export "$original_var_name"=$(cat "$var_value")
+      echo "Setting $original_var_name from the content of $var_value"
+
+      # Unset the *_FILE environment variable.
+      unset "$var_name"
+      echo "Unsetting $var_name"
+    else
+      # Issue an error if the *_FILE variable is not properly set, or the file does not exist or is empty.
+      echo "Error: File $var_value does not exist or is empty."
+    fi
+  fi
+done
+
+# Enable final debug logging based on the DEBUG_SECRETS environment variable.
+# Logs the final values of BORG_PASSPHRASE and BORG_PASSPHRASE_FILE.
+if [ "${DEBUG_SECRETS}" = "true" ] || [ "${DEBUG_SECRETS}" = "1" ]; then
+  echo "Before: BORG_PASSPHRASE: ${BORG_PASSPHRASE}"
+  echo "Before: BORG_PASSPHRASE_FILE: ${BORG_PASSPHRASE_FILE}"
+  echo "Before: YOUR_PASSPHRASE: ${YOUR_PASSPHRASE}"
+  echo "Before: YOUR_PASSPHRASE_FILE: ${YOUR_PASSPHRASE_FILE}"
+fi
+
+# Disable cron if it's set to disabled.
+if [[ "$CRON" = "false" ]]; then
+    echo "Disabling cron, removing configuration"
+    # crontab -r # quite destructive
+    # echo -n > /etc/crontabs/root # Empty config, doesn't look as nice with "crontab -l"
+    echo "# Cron disabled" > /etc/crontabs/root
+    echo "Cron is now disabled"
+# Apply default or custom cron if $CRON is unset or set (not null):
+elif [[ -v CRON ]]; then
+    CRON="${CRON:-"0 1 * * *"}"
+    CRON_COMMAND="${CRON_COMMAND:-"borgmatic --stats -v 0 2>&1"}"
+    echo "$CRON $CRON_COMMAND" > /etc/crontabs/root
+    echo "Applying custom cron"
+# If nothing is set, revert to default behaviour
+else
+    echo "Applying crontab.txt"
+    crontab /etc/borgmatic.d/crontab.txt
+fi
+
+# Apply extra cron if it's set
+if [ -v EXTRA_CRON ]
+then
+    echo "$EXTRA_CRON" >> /etc/crontabs/root
+fi
+
+# Current crontab var
+crontab=$(crontab -l)
+
+# Output cron settings to console
+printf "Cron job set as: \n$crontab\n"
+
+# Start Cron
+exec /usr/sbin/crond -f -L /dev/stdout
