@@ -173,15 +173,7 @@ apprise:
         body: Your backups have failed.
 ```
 
-#### Important Note
-
-Just like in the previous configuration, you can use `$(cat /tmp/backup_run.log)` to send log outputs as part of the notification body. Simply replace the `body` value with this variable to include the log in your notifications.
-
-```yaml
-    finish:
-        title: ✅ SUCCESS
-        body: $(cat /tmp/backup_run.log)
-```
+And as of borgmatic 1.8.9+, borgmatic's logs are automatically appended to the `body` for each notification.
 
 ### Conclusion
 
