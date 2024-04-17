@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:latest
-FROM python:3.11.5-alpine3.18
+FROM python:3.12.3-alpine3.19
 LABEL maintainer='github.com/borgmatic-collective'
 # VOLUME /mnt/source
 # VOLUME /mnt/borg-repository
@@ -22,7 +22,6 @@ RUN apk add --update --no-cache \
     mariadb-client \
     mariadb-connector-c \
     mongodb-tools \
-    openssl1.1-compat \
     postgresql-client \
     sqlite \
     sshfs \
