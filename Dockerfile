@@ -59,7 +59,8 @@ RUN <<EOF
         postgresql-client   \
         sqlite              \
         sshfs               \
-        tzdata
+        tzdata              \
+        xxhash
     apk upgrade --no-cache
 EOF
 
