@@ -109,7 +109,7 @@ fi
 crontab=$(crontab -l)
 
 # Output cron settings to console
-printf "Cron job set as: \n$crontab\n"
+echo -e "Cron job set as: \n$crontab\n"
 
 # Start Cron
 exec /usr/sbin/crond -f -L /dev/stdout
