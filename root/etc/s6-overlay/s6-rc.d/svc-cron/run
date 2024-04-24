@@ -6,6 +6,14 @@ borgmaticver=$(borgmatic --version)
 apprisever=$(apprise --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
 pythonver=$(python3 --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
 
+if [ "${DOCKERCLI}" == "true" ]; then
+  dockerver=$(docker --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+  composever=$(docker compose version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+else
+  dockerver="not installed"
+  composever="not installed"
+fi
+
 # Software versions
 echo "Software Versions:
 -----------------------------------
