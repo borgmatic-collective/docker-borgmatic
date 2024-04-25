@@ -1,13 +1,4 @@
-#!/usr/bin/with-contenv bash
-
-# Install DockerCLI if true
-if [ "${DOCKERCLI:-}" == "true" ]; then
-  echo "Installing Docker CLI..."
-  apk add -U --quiet docker-cli
-  dockerver=$(docker --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
-else
-  dockerver="not installed"
-fi
+#!/command/with-contenv bash
 
 # Version variables
 borgver=$(borg --version)
@@ -15,18 +6,34 @@ borgmaticver=$(borgmatic --version)
 apprisever=$(apprise --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
 pythonver=$(python3 --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
 
+if [ "${DOCKERCLI}" == "true" ]; then
+  dockerver=$(docker --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+  composever=$(docker compose version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+else
+  dockerver="not installed"
+  composever="not installed"
+fi
+
 # Software versions
+echo "-----------------------------------"
 echo "Software Versions:
 -----------------------------------
 apprise $apprisever
 $borgver
 borgmatic $borgmaticver
 dockercli $dockerver
+composecli $composever
 python $pythonver
 -----------------------------------
 Time Zone: $TZ
------------------------------------
-"
+-----------------------------------"
+if [ -v EXTRA_PKGS ]
+then
+  echo "Additional packages installed:"
+  echo "-----------------------------------"
+  echo $EXTRA_PKGS | tr -s " " "\n"
+  echo "-----------------------------------"
+fi
 
 # Enable initial debug logging based on the DEBUG_SECRETS environment variable.
 # Logs the initial values of BORG_PASSPHRASE and BORG_PASSPHRASE_FILE.

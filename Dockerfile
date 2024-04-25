@@ -74,7 +74,7 @@ RUN --mount=type=cache,id=pip,target=/root/.cache,sharing=locked \
     borgmatic --bash-completion > "$(pkg-config --variable=completionsdir bash-completion)"/borgmatic
 EOF
 
-COPY --link root/ /
+COPY --chmod=744 --link root/ /
 
 VOLUME /root/.borgmatic
 VOLUME /root/.config/borg

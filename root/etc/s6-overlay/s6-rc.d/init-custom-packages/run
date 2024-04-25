@@ -1,0 +1,17 @@
+#!/command/with-contenv bash
+
+# Install DockerCLI if true
+if [ "${DOCKERCLI}" == "true" ]; then
+  echo "[custom-init] Installing Docker CLI and Docker Compose..."
+  apk add -U --quiet docker-cli docker-cli-compose
+else
+  echo "[custom-init] Docker CLI variable not set, skipping..."
+fi
+
+# Install additional packages
+if [ -v EXTRA_PKGS ]; then
+  echo "[custom-init] Installing extra packages: $EXTRA_PKGS"
+  apk add -U --quiet $EXTRA_PKGS
+else
+  echo "[custom-init] No custom packages found, skipping..."
+fi
