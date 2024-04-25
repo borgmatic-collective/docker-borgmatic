@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/command/with-contenv bash
 
 # Version variables
 borgver=$(borg --version)
@@ -15,6 +15,7 @@ else
 fi
 
 # Software versions
+echo "-----------------------------------"
 echo "Software Versions:
 -----------------------------------
 apprise $apprisever
