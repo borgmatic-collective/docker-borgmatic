@@ -154,6 +154,11 @@ Starting from version 1.8.4, Borgmatic has native support for Apprise within its
 
 ```yaml
 apprise:
+    states:
+        - start
+        - finish
+        - fail
+
     services:
         - url: mailto://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com
           label: mail
