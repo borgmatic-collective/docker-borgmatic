@@ -88,17 +88,17 @@ if [ "${DEBUG_SECRETS}" = "true" ] || [ "${DEBUG_SECRETS}" = "1" ]; then
 fi
 
 # Disable cron if it's set to disabled.
-if [[ "$CRON" = "false" ]]; then
+if [[ "$BACKUP_CRON" = "false" ]]; then
     echo "Disabling cron, removing configuration"
     # crontab -r # quite destructive
     # echo -n > /etc/crontabs/root # Empty config, doesn't look as nice with "crontab -l"
     echo "# Cron disabled" > /etc/crontabs/root
     echo "Cron is now disabled"
-# Apply default or custom cron if $CRON is unset or set (not null):
-elif [[ -v CRON ]]; then
-    CRON="${CRON:-"0 1 * * *"}"
-    CRON_COMMAND="${CRON_COMMAND:-"borgmatic --stats -v 0 2>&1"}"
-    echo "$CRON $CRON_COMMAND" > /etc/crontabs/root
+# Apply default or custom cron if $BACKUP_CRON is unset or set (not null):
+elif [[ -v BACKUP_CRON ]]; then
+    BACKUP_CRON="${BACKUP_CRON:-"0 1 * * *"}"
+    CRON_COMMAND="${CRON_COMMAND:-"/usr/local/bin/borgmatic --stats -v 0 2>&1"}"
+    echo "$BACKUP_CRON $CRON_COMMAND" > /etc/crontabs/root
     echo "Applying custom cron"
 # If nothing is set, revert to default behaviour
 else

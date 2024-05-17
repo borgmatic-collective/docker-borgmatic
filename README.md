@@ -80,7 +80,7 @@ You can set the following environment variables:
 
 You can also provide your own crontab file. If `data/borgmatic.d/crontab.txt` exists, `BACKUP_CRON` will be ignored in preference to it. In here you can add any other tasks you want ran
 ```
-0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
+0 1 * * * PATH=$PATH:/usr/local/bin /usr/local/bin/borgmatic --stats -v 0 2>&1
 ```
 
 Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables.
@@ -102,7 +102,7 @@ To enhance your experience with Borgmatic, we'll show you a quick example of how
 In an unmodified Borgmatic installation, your `cronjob.txt` might look something like this:
 
 ```
-0 1 * * * PATH=$PATH:/usr/local/bin /usr/local/bin/borgmatic --stats -v 0 2>&1
+0 1 * * * /usr/local/bin/borgmatic --stats -v 0 2>&1
 ```
 
 To incorporate Apprise notifications, you can modify it like this:
