@@ -22,9 +22,9 @@ This repository provides a Docker image for [borgmatic](https://github.com/witte
 
 ### Prerequisites
 Before proceeding, ensure that you have [Docker](https://www.docker.com/) installed and properly configured on your system. Refer to the [Docker documentation](https://docs.docker.com/engine/install/) for installation instructions specific to your operating system. If you want to use [docker-compose](https://docs.docker.com/compose/install/), you may also need to install it seperately.
-Alternatively, you can also use [podman](https://podman.io/docs) to run this image. 
+Alternatively, you can also use [podman](https://podman.io/docs) to run this image.
 
-### Getting Started 
+### Getting Started
 
 Run this command to create data directories required by this image under your prefered directory. 
 
@@ -80,16 +80,20 @@ You can set the following environment variables:
 
 You can also provide your own crontab file. If `data/borgmatic.d/crontab.txt` exists, `BACKUP_CRON` will be ignored in preference to it. In here you can add any other tasks you want ran
 ```
-0 1 * * * PATH=$PATH:/usr/bin /usr/bin/borgmatic --stats -v 0 2>&1
+0 1 * * * PATH=$PATH:/usr/local/bin /usr/local/bin/borgmatic --stats -v 0 2>&1
 ```
 
 Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables.
 
 ### Using Secrets (Optional)
 
-You also have the option to use Docker Secrets for more sensitive information. This is not mandatory, but it adds an extra layer of security. **Note that this feature is only applicable to environment variables starting with `BORG`.**
+You also have the option of using Docker Secrets for more sensitive information. This is not mandatory, but provides an additional layer of security. **Note that this function is only applicable to environment variables that start with `BORG` or `YOUR`.**
 
-For every environment variable like `BORG_PASSPHRASE`, you can create a corresponding secret file, named as `BORG_PASSPHRASE_FILE`. Place the content of the secret inside this file. The startup script will automatically look for corresponding `_FILE` secrets if the environment variables are not set and load them.
+For each environment variable such as `BORG_PASSPHRASE`, you can create a corresponding secret file called `BORG_PASSPHRASE_FILE`. Store the contents of the secret file in this file. The start script automatically searches for corresponding `_FILE` secrets if the environment variables are not set and loads them.
+
+It is important to know that this environment variable is **not** available via `docker compose exec borgmatic sh`. Only for the automated call via the defined cron.
+
+
 
 ## Using Apprise for Notifications
 
@@ -102,7 +106,7 @@ To enhance your experience with Borgmatic, we'll show you a quick example of how
 In an unmodified Borgmatic installation, your `cronjob.txt` might look something like this:
 
 ```
-0 1 * * * PATH=$PATH:/usr/local/bin /usr/local/bin/borgmatic --stats -v 0 2>&1
+0 1 * * * /usr/local/bin/borgmatic --stats -v 0 2>&1
 ```
 
 To incorporate Apprise notifications, you can modify it like this:
@@ -121,11 +125,11 @@ before_backup:
 
 after_backup:
   - echo "Backup created."
-  - apprise -vv -t "✅ SUCCESS" -b "$(cat /tmp/backup_run.log)" "mailtos://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com"
+  - apprise -vv -t "✅ SUCCESS" -b "$(cat /tmp/backup_run.log)" "mailtos://smtp.example.com:587?user=server@example.com&pass=YourSecurePassword&from=server@example.com&to=receiver@example.com"
 
 on_error:
   - echo "Error while creating a backup."
-  - apprise -vv -t "❌ FAILED" -b "$(cat /tmp/backup_run.log)" "mailtos://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com"
+  - apprise -vv -t "❌ FAILED" -b "$(cat /tmp/backup_run.log)" "mailtos://smtp.example.com:587?user=server@example.com&pass=YourSecurePassword&from=server@example.com&to=receiver@example.com"
 ```
 
 ##### Note:
@@ -145,7 +149,7 @@ Apprise allows you to notify multiple services at the same time:
 ```yaml
 after_backup:
   - echo "Backup created."
-  - apprise -vv -t "✅ SUCCESS" -b "$(cat /tmp/backup_run.log)" "mailto://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com,slack://token@Txxxx/Bxxxx/Cxxxx"
+  - apprise -vv -t "✅ SUCCESS" -b "$(cat /tmp/backup_run.log)" "mailtos://smtp.example.com:587?user=server@example.com&pass=YourSecurePassword&from=server@example.com&to=receiver@example.com,slack://token@Txxxx/Bxxxx/Cxxxx"
 ```
 
 ### Native Apprise Configuration in Borgmatic 1.8.4+
@@ -160,7 +164,7 @@ apprise:
         - fail
 
     services:
-        - url: mailto://smtp.example.com:587?user=info@example.com&pass=YourSecurePassword&from=server@example.com
+        - url: mailtos://smtp.example.com:587?user=server@example.com&pass=YourSecurePassword&from=server@example.com&to=receiver@example.com
           label: mail
         - url: slack://token@Txxxx/Bxxxx/Cxxxx
           label: slack
