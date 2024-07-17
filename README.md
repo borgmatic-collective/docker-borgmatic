@@ -48,6 +48,24 @@ docker run \
 
 See [Other usage methods](#other-usage-methods) below for more options.
 
+### Running the container the first time ###
+
+When you run the container for the first time, you'll need to execute into the container and run a command to initialize the repository in the directory you've specified in your docker configuration:
+
+```
+docker exec -it borgmatic /bin/sh
+borgmatic init --encryption repokey
+```
+
+In addition, it may be a good idea to manually perform a backup to ensure everything performs as expected:
+
+```
+docker exec -it borgmatic /bin/sh
+borgmatic --stats -v 1 --files
+```
+
+Both these commands will use the `borgmatic.d/config.yaml` file you provided, along with the `BORG_PASSPHRASE` and other environment variables in your docker configuration.
+
 ## Volumes ##
 
 The following volumes are available for mounting:
