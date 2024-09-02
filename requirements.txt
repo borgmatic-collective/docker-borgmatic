@@ -2,4 +2,4 @@
 
 borgbackup==1.4.0
 borgmatic[apprise]==1.8.14
-llfuse==1.5.0
+llfuse==1.5.1
