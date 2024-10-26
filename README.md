@@ -95,7 +95,7 @@ You can set the following environment variables:
 | --- | --- |
 | `TZ` | Time zone, e.g. `TZ="Europe/Berlin"'`. |
 | `BORG_RSH` | SSH parameters, e.g. `BORG_RSH="ssh -i /root/.ssh/id_ed25519 -p 50221"` |
-| `BORG_PASSPHRASE` | Repository passphrase, e.g. `BORG_PASSPHRASE="DonNotMissToChangeYourPassphrase"` |
+| `BORG_PASSPHRASE` | Repository passphrase, e.g. `BORG_PASSPHRASE=DonNotMissToChangeYourPassphrase` |
 | `BACKUP_CRON` | Cron schedule to run borgmatic. Default:`0 1 * * *` |
 | `RUN_ON_STARTUP` | Run borgmatic on startup. e.g.: `RUN_ON_STARTUP=true` |
 
