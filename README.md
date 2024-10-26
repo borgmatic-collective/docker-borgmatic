@@ -18,6 +18,9 @@ This repository provides a Docker image for [borgmatic](https://github.com/witte
 > **Warning**
 > As of 2023-06-23 msmtp and ntfy flavors have been discontinued. This image has now switched to apprise.
 
+> **Warning**
+> Secrets will be implemented differently from October 2024. From `*_FILE` to `FILE__*`
+
 ## Usage ##
 
 ### Prerequisites
@@ -26,7 +29,7 @@ Alternatively, you can also use [podman](https://podman.io/docs) to run this ima
 
 ### Getting Started
 
-Run this command to create data directories required by this image under your prefered directory. 
+Run this command to create data directories required by this image under your prefered directory.
 
 ```
 mkdir data/{borgmatic.d,repository,.config,.ssh,.cache}
@@ -103,15 +106,27 @@ You can also provide your own crontab file. If `data/borgmatic.d/crontab.txt` ex
 
 Beside that, you can also pass any environment variable that is supported by borgmatic. See documentation for [borgmatic](https://torsion.org/borgmatic/) and [Borg](https://borgbackup.readthedocs.io/) and for a list of supported variables.
 
-### Using Secrets (Optional)
+### Environment variables from files (Docker secrets)¶
+You can set any environment variable from a file by using a special prepend `FILE__`.
+As an example:
+```
+-e FILE__BORG_PASSPHRASE=/run/secrets/mysecretvariable
+```
+Will set the environment variable `BORG_PASSPHRASE` based on the contents of the `/run/secrets/mysecretvariable` file.
 
-You also have the option of using Docker Secrets for more sensitive information. This is not mandatory, but provides an additional layer of security. **Note that this function is only applicable to environment variables that start with `BORG` or `YOUR`.**
+It is important to know that this environment variable is **not** simply available via `docker (compose) exec borgmatic sh` but only for the automatic call via the defined cron.
 
-For each environment variable such as `BORG_PASSPHRASE`, you can create a corresponding secret file called `BORG_PASSPHRASE_FILE`. Store the contents of the secret file in this file. The start script automatically searches for corresponding `_FILE` secrets if the environment variables are not set and loads them.
+#### Manual commands with secrets
+If you want to initialize a repository manually or start a backup outside of the cron job, proceed as follows:
 
-It is important to know that this environment variable is **not** available via `docker compose exec borgmatic sh`. Only for the automated call via the defined cron.
-
-
+- **Initialize repository**
+  ```
+  docker exec borgmatic /bin/sh -c 'BORG_PASSPHRASE=$(cat /run/s6/container_environment/BORG_PASSPHRASE) && borgmatic init --encryption repokey'
+  ```
+- **Trigger manual backup**
+  ```
+  docker exec borgmatic /bin/sh -c 'BORG_PASSPHRASE=$(cat /run/s6/container_environment/BORG_PASSPHRASE) && borgmatic create --stats -v 0'
+  ```
 
 ## Using Apprise for Notifications
 
