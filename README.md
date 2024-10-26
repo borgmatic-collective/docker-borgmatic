@@ -121,11 +121,11 @@ If you want to initialize a repository manually or start a backup outside of the
 
 - **Initialize repository**
   ```
-  docker exec borgmatic /bin/sh -c 'BORG_PASSPHRASE=$(cat /run/s6/container_environment/BORG_PASSPHRASE) && borgmatic init --encryption repokey'
+  docker exec borgmatic /bin/sh -c 'export BORG_PASSPHRASE=$(cat /run/s6/container_environment/BORG_PASSPHRASE) && borgmatic init --encryption repokey'
   ```
 - **Trigger manual backup**
   ```
-  docker exec borgmatic /bin/sh -c 'BORG_PASSPHRASE=$(cat /run/s6/container_environment/BORG_PASSPHRASE) && borgmatic create --stats -v 0'
+  docker exec borgmatic /bin/sh -c 'export BORG_PASSPHRASE=$(cat /run/s6/container_environment/BORG_PASSPHRASE) && borgmatic create --stats -v 0'
   ```
 
 ## Using Apprise for Notifications
