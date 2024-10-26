@@ -1,6 +1,10 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
+# This script originates from the base image by LinuxServer.io
+# (https://www.linuxserver.io/). It is provided under the GNU
+# GENERAL PUBLIC LICENSE Version 3.
+
 if find /run/s6/container_environment/FILE__* -maxdepth 1 > /dev/null 2>&1; then
     for FILENAME in /run/s6/container_environment/FILE__*; do
             SECRETFILE=$(cat "${FILENAME}")
