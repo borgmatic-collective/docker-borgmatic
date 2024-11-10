@@ -79,7 +79,7 @@ The following volumes are available for mounting:
 | `/mnt/borg-repository` | Mount your borg backup repository here. |
 | `/etc/borgmatic.d` | Where you need to create crontab.txt and your borgmatic config.yml |
 | `/root/.borgmatic` | **Note** this is now redundant and has been deprecated, please remove this from your configs |
-| `/root/.local/state/borgmatic` | Here are the state files for periodic checks, prunes, and other things. |
+| `/root/.local/state/borgmatic` | Here are the state files for periodic checks. |
 | `/root/.config/borg` | Here the borg config and keys for keyfile encryption modes are stored. Make sure to backup your keyfiles! Also needed when encryption is set to none. |
 | `/root/.ssh` | Mount either your own .ssh here or create a new one with ssh keys in for your remote repo locations. |
 | `/root/.cache/borg` | A non-volatile place to store the borg chunk cache. |
