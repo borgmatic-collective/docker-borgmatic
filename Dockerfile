@@ -76,7 +76,7 @@ EOF
 
 COPY --chmod=744 --link root/ /
 
-VOLUME /root/.borgmatic
+VOLUME /root/.local/state/borgmatic
 VOLUME /root/.config/borg
 VOLUME /root/.cache/borg
 
