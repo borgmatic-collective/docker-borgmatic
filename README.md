@@ -13,9 +13,6 @@
 This repository provides a Docker image for [borgmatic](https://github.com/witten/borgmatic), a simple and efficient backup tool based on [Borgbackup](https://github.com/borgbackup). The image is designed to make it easy to set up and run borgmatic (with Borg and optionally Cron daemon) within a Docker container, enabling you to streamline your backup process and ensure the safety of your data.
 
 > **Warning**
-> As of 2022-01-29 this image has switched to use [Supercronic](https://github.com/aptible/supercronic) instead of cron from alpine
-
-> **Warning**
 > As of 2023-06-23 msmtp and ntfy flavors have been discontinued. This image has now switched to apprise.
 
 > **Warning**
