@@ -13,9 +13,6 @@
 This repository provides a Docker image for [borgmatic](https://github.com/witten/borgmatic), a simple and efficient backup tool based on [Borgbackup](https://github.com/borgbackup). The image is designed to make it easy to set up and run borgmatic (with Borg and optionally Cron daemon) within a Docker container, enabling you to streamline your backup process and ensure the safety of your data.
 
 > **Warning**
-> As of 2022-01-29 this image has switched to use [Supercronic](https://github.com/aptible/supercronic) instead of cron from alpine
-
-> **Warning**
 > As of 2023-06-23 msmtp and ntfy flavors have been discontinued. This image has now switched to apprise.
 
 > **Warning**
@@ -100,6 +97,7 @@ You can set the following environment variables:
 | `BORG_PASSPHRASE` | Repository passphrase, e.g. `BORG_PASSPHRASE=DonNotMissToChangeYourPassphrase` |
 | `BACKUP_CRON` | Cron schedule to run borgmatic. Default:`0 1 * * *` |
 | `RUN_ON_STARTUP` | Run borgmatic on startup. e.g.: `RUN_ON_STARTUP=true` |
+| `DOCKERCLI` | Install docker client executable to manipulate (start/stop) containers before, or after backup. See [here](#starting-and-stopping-containers-from-hooks) for a detailed explanation. |
 
 You can also provide your own crontab file. If `data/borgmatic.d/crontab.txt` exists, `BACKUP_CRON` will be ignored in preference to it. In here you can add any other tasks you want ran
 ```
@@ -337,9 +335,12 @@ docker-compose exec borgmatic bash
 In case you are using the container to backup docker volumes used by other containers, you might
 want to make sure that the data is consistent and doesn't change while the backup is running. The
 easiest way to ensure this is to stop the affected containers before the backup and restart them
-afterwards. You can use the appropriate [borgmatic
-hooks](https://torsion.org/borgmatic/docs/how-to/add-preparation-and-cleanup-steps-to-backups/) and
-[control the docker engine through the API](https://docs.docker.com/engine/api/) using the hosts
+afterwards.
+
+There are two ways to achieve the start and stops. The first [use Docker CLI](#option-1-using-docker-cli). The second [Use Docker HTTP-POST API](#option-2-using-docker-http-post-api).
+
+You can use the appropriate [borgmatic hooks](https://torsion.org/borgmatic/docs/how-to/add-preparation-and-cleanup-steps-to-backups/) and
+[control the docker engine through the API](https://docs.docker.com/engine/api/), or via the docker client labrary (see options) using the hosts
 docker socket.
 
 Please note that you might want to prefer the `*_everything` hooks to the `*_backup` hooks, as
@@ -348,6 +349,35 @@ therefore the containers stay stopped.
 
 First mount the docker socket from the host by adding `-v /var/run/docker.sock:/var/run/docker.sock`
 to your `run` command or in the volume list of your `docker-compose.yml`.
+
+Now, pick one of these two options.
+
+##### Option 1 Using Docker CLI
+
+Add the following environment to your docker run command line ``-e DOCKERCLI='true'``
+to your `run` command or in the enviroment section of your `docker-compose.yml`. This is in addition to the above mentioned socket to add.
+
+Now the docker command is available in your container. 
+
+Then add the following in your config.yaml:
+```
+...
+constants:
+  ...
+  containernames: "container-a container-b container c"
+...
+before_backup:
+  - echo {containernames} | xargs -n 1 echo | tac | xargs docker stop
+
+after_backup:
+  - echo {containernames} | xargs docker start
+...
+```
+This way all the containers are stopped in reverse order before the backup, and restarted in order after the backup. This way, for instance, you can ensure the back-end gets stopped last and started first.
+
+**Note**: Make sure you put the names of the containers in a single, quoted string, separated by spaces, as the *containernames* constant shows.
+
+##### Option 2 Using Docker HTTP-POST API
 
 Then use the following example to create the start/stop hooks in the `config.yml` for the containers
 that you want to control.
