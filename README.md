@@ -67,6 +67,9 @@ borgmatic --stats -v 1 --files
 
 Both these commands will use the `borgmatic.d/config.yaml` file you provided, along with the `BORG_PASSPHRASE` and other environment variables in your docker configuration.
 
+> **Note/Gotcha for archive names:** 
+> By default borgmatic uses `{hostname}` for naming (and then pruning, compacting archives). However the docker containers hostname changes every time it's rebuilt. To ensure consistent naming across archives and a properly working prune/compact you should specifically set the archive name in the config.yaml e.g. `archive_name_format: 'my-pc-backup-{now:%Y-%m-%d-%H%M%S}`.
+
 ## Volumes ##
 
 The following volumes are available for mounting:
