@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:latest
 
-FROM python:3.12.8-alpine3.21 AS base
+FROM python:3.12.9-alpine3.21 AS base
 ARG TARGETARCH
 
 LABEL maintainer='borgmatic-collective'
