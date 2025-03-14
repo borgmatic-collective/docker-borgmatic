@@ -139,7 +139,7 @@ To enhance your experience with Borgmatic, we'll show you a quick example of how
 
 #### Cronjob Configuration
 
-In an unmodified Borgmatic installation, your `cronjob.txt` might look something like this:
+In an unmodified Borgmatic installation, your `crontab.txt` might look something like this:
 
 ```
 0 1 * * * /usr/local/bin/borgmatic --stats -v 0 2>&1
