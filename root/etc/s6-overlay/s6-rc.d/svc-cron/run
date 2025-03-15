@@ -40,20 +40,18 @@ then
   echo "-----------------------------------"
 fi
 
-# Disable cron if it's set to disabled.
-if [[ "$BACKUP_CRON" = "false" ]]; then
-    echo "Disabling cron, removing configuration"
-    # crontab -r # quite destructive
-    # echo -n > /etc/crontabs/root # Empty config, doesn't look as nice with "crontab -l"
+
+DEFAULT_BACKUP_CRON="0 1 * * *"
+DEFAULT_CRON_COMMAND="/usr/local/bin/borgmatic --stats -v 0 2>&1"
+
+if [[ $BACKUP_CRON = "false" ]]; then
     echo "# Cron disabled" > /etc/crontabs/root
     echo "Cron is now disabled"
-# Apply default or custom cron if $BACKUP_CRON is unset or set (not null):
-elif [[ -v BACKUP_CRON ]]; then
-    BACKUP_CRON="${BACKUP_CRON:-"0 1 * * *"}"
-    CRON_COMMAND="${CRON_COMMAND:-"/usr/local/bin/borgmatic --stats -v 0 2>&1"}"
+elif [[ -z $BACKUP_CRON ]]; then
+    BACKUP_CRON=${BACKUP_CRON:-$DEFAULT_BACKUP_CRON}
+    CRON_COMMAND=${CRON_COMMAND:-$DEFAULT_CRON_COMMAND}
     echo "$BACKUP_CRON $CRON_COMMAND" > /etc/crontabs/root
     echo "Applying custom cron"
-# If nothing is set, revert to default behaviour
 else
     echo "Applying crontab.txt"
     crontab /etc/borgmatic.d/crontab.txt
