@@ -12,6 +12,22 @@
 
 This repository provides a Docker image for [borgmatic](https://github.com/witten/borgmatic), a simple and efficient backup tool based on [Borgbackup](https://github.com/borgbackup). The image is designed to make it easy to set up and run borgmatic (with Borg and optionally Cron daemon) within a Docker container, enabling you to streamline your backup process and ensure the safety of your data.
 
+### Docker Image Tags
+
+The following Docker image tags are available:
+
+- `1.8.13` - Specific version 1.8.13
+- `1.8.12` - Specific version 1.8.12
+- `1.8` - Latest 1.8.x version (currently 1.8.13)
+- `1` - Latest 1.x.x version (currently 1.8.13)
+- `latest` - Latest version (currently 1.8.13)
+
+This tagging system allows you to pin to your preferred level of version stability:
+- Pin to a specific version (e.g., `1.8.13`) for maximum stability
+- Pin to a minor version (e.g., `1.8`) to receive patch updates only
+- Pin to a major version (e.g., `1`) to receive minor and patch updates, but not major version changes
+- Use `latest` to always get the most recent version
+
 > **Warning**
 > As of 2023-06-23 msmtp and ntfy flavors have been discontinued. This image has now switched to apprise.
 
