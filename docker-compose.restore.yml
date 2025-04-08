@@ -10,4 +10,5 @@ services:
       - label:disable
     devices:
       - /dev/fuse:/dev/fuse
+    entrypoint: ''
     command: /bin/sh
