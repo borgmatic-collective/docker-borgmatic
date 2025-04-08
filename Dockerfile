@@ -60,7 +60,8 @@ RUN <<EOF
         sqlite              \
         sshfs               \
         tzdata              \
-        xxhash
+        xxhash              \
+        btrfs-progs
     apk upgrade --no-cache
 EOF
 
