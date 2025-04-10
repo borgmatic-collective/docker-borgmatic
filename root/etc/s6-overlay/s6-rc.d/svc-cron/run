@@ -54,11 +54,11 @@ if [[ "$BACKUP_CRON" = "false" ]]; then
 elif [[ -n "$BACKUP_CRON" ]]; then
     CRON_COMMAND="${CRON_COMMAND:-$DEFAULT_CRON_COMMAND}"
     echo "$BACKUP_CRON $CRON_COMMAND" > /etc/crontabs/root
-    echo "Applying custom cron"
+    echo "Applying custom cron from env"
 
 # Case 3: BACKUP_CRON is unset or empty, and crontab.txt exists → use crontab file
 elif [[ -f "$CRONTAB_FILE" ]]; then
-    echo "Applying file crontab.txt"
+    echo "Applying cron from file $CRONTAB_FILE"
     crontab "$CRONTAB_FILE"
 
 # Case 4: BACKUP_CRON is unset or empty, and crontab.txt doesn't exist → use defaults
