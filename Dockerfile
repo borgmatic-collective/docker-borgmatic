@@ -57,7 +57,6 @@ RUN <<EOF
         mongodb-tools       \
         openssl             \
         postgresql-client   \
-        pkgconfig           \
         sshfs               \
         sqlite              \
         tzdata              \
