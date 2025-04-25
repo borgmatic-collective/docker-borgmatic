@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:latest
 
-FROM python:3.13.1-alpine3.21 AS base
+FROM python:3.13.3-alpine3.21 AS base
 ARG TARGETARCH
 
 LABEL maintainer='borgmatic-collective'
@@ -43,6 +43,7 @@ RUN <<EOF
         bash                \
         bash-completion     \
         bash-doc            \
+        btrfs-progs         \
         ca-certificates     \
         curl                \
         findmnt             \
@@ -55,13 +56,11 @@ RUN <<EOF
         mariadb-connector-c \
         mongodb-tools       \
         openssl             \
-        pkgconfig           \
         postgresql-client   \
-        sqlite              \
         sshfs               \
+        sqlite              \
         tzdata              \
-        xxhash              \
-        btrfs-progs
+        xxhash
     apk upgrade --no-cache
 EOF
 
@@ -72,7 +71,7 @@ RUN --mount=type=cache,id=pip,target=/root/.cache,sharing=locked \
     set -xe
     python3 -m pip install -U pip
     python3 -m pip install -Ur requirements.txt
-    borgmatic --bash-completion > "$(pkg-config --variable=completionsdir bash-completion)"/borgmatic
+    apk add --no-cache -U borgmatic-bash-completion
 EOF
 
 COPY --chmod=744 --link root/ /
