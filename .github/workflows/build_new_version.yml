@@ -25,6 +25,7 @@ jobs:
             # latest tag is applied automatically for semver type in auto mode
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Prepare Base Build Metadata | GHCR
         id: meta_base_ghcr
@@ -38,6 +39,7 @@ jobs:
             # latest tag is applied automatically for semver type in auto mode
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master

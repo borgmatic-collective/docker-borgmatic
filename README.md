@@ -131,6 +131,22 @@ If you want to initialize a repository manually or start a backup outside of the
   docker exec borgmatic /bin/sh -c 'export BORG_PASSPHRASE=$(cat /run/s6/container_environment/BORG_PASSPHRASE) && borgmatic create --stats -v 0'
   ```
 
+### Docker Image Tags
+
+The following Docker image tags are available (assuming 1.8.13 is the latest release):
+
+- `1.8.13` - Specific version 1.8.13
+- `1.8.12` - Specific version 1.8.12
+- `1.8` - Latest 1.8.x version (currently 1.8.13)
+- `1` - Latest 1.x.x version (currently 1.8.13)
+- `latest` - Latest version (currently 1.8.13)
+
+This tagging system allows you to pin to your preferred level of version stability:
+- Pin to a specific version (e.g., `1.8.13`) for maximum stability
+- Pin to a minor version (e.g., `1.8`) to receive patch updates only
+- Pin to a major version (e.g., `1`) to receive minor and patch updates, but not major version changes
+- Use `latest` to always get the most recent version
+
 ## Using Apprise for Notifications
 
 To enhance your experience with Borgmatic, we'll show you a quick example of how to use Apprise for notifications. Apprise is a versatile tool that integrates with a variety of services and is built into Borgmatic. With the upcoming version 1.8.4 also natively. Here's a quick example of how you can use Apprise.
