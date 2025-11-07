@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:latest
 
-FROM python:3.13.3-alpine3.21 AS base
+FROM python:3.14.0-alpine3.22 AS base
 ARG TARGETARCH
 
 LABEL maintainer='borgmatic-collective'
@@ -56,7 +56,9 @@ RUN <<EOF
         mariadb-connector-c \
         mongodb-tools       \
         openssl             \
+        openssl-dev \
         postgresql-client   \
+        py3-pkgconfig \
         sshfs               \
         sqlite              \
         tzdata              \
