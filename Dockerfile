@@ -56,9 +56,7 @@ RUN <<EOF
         mariadb-connector-c \
         mongodb-tools       \
         openssl             \
-        openssl-dev \
         postgresql-client   \
-        py3-pkgconfig \
         sshfs               \
         sqlite              \
         tzdata              \
