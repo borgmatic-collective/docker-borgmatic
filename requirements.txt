@@ -1,5 +1,5 @@
 --extra-index-url https://dl.cloudsmith.io/public/borgmatic-collective/borgmatic/python/simple/
 
 borgbackup==1.4.3
-borgmatic[apprise]==2.0.12
+borgmatic[apprise]==2.0.13
 llfuse==1.5.2
