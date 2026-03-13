@@ -359,7 +359,7 @@ afterwards.
 There are two ways to achieve the start and stops. The first [use Docker CLI](#option-1-using-docker-cli). The second [Use Docker HTTP-POST API](#option-2-using-docker-http-post-api).
 
 You can use the appropriate [borgmatic hooks](https://torsion.org/borgmatic/docs/how-to/add-preparation-and-cleanup-steps-to-backups/) and
-[control the docker engine through the API](https://docs.docker.com/engine/api/), or via the docker client labrary (see options) using the hosts
+[control the docker engine through the API](https://docs.docker.com/engine/api/), or via the docker client library (see options) using the hosts
 docker socket.
 
 Please note that you might want to prefer the `*_everything` hooks to the `*_backup` hooks, as
