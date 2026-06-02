@@ -29,7 +29,7 @@ Alternatively, you can also use [podman](https://podman.io/docs) to run this ima
 Run this command to create data directories required by this image under your prefered directory.
 
 ```
-mkdir data/{borgmatic.d,repository,.config,.ssh,.cache}
+mkdir -p data/{borgmatic.d,repository,.config,.ssh,.cache}
 ```
 Configure a copy of borgmatic's [config.yaml](data/borgmatic.d/config.yaml) in `data/borgmatic.d` and run the container. You can modify any of the host mount point to fit your backup configuration.
 
