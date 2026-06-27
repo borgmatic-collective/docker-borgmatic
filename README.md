@@ -432,7 +432,10 @@ borg break-lock /mnt/borg-repository
 
 ## Running borgmatic as a one-shot command
 
-The image can be used without cron — pass borgmatic subcommands directly:
+Pass `borgmatic` and its subcommand as the container command. S6 starts, runs
+all init scripts, executes borgmatic, then shuts down. The
+`crond crashed with signal 15` message at the end is expected and harmless —
+it is S6 cleanly stopping crond when borgmatic exits.
 
 ```console
 docker run --rm -it \
