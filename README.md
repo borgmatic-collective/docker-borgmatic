@@ -1,14 +1,12 @@
 # Borgmatic Container
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/modem7/borgmatic-docker)](https://hub.docker.com/r/modem7/borgmatic-docker)
-[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/modem7/borgmatic-docker/latest)](https://hub.docker.com/r/modem7/borgmatic-docker)
-[![Build Status](https://drone.modem7.com/api/badges/modem7/docker-borgmatic/status.svg)](https://drone.modem7.com/modem7/docker-borgmatic)
-[![GitHub last commit](https://img.shields.io/github/last-commit/modem7/docker-borgmatic)](https://github.com/modem7/docker-borgmatic)
-[![User Guide](https://img.shields.io/badge/User_Guide-OmegaWiki-informational?style=flat&logo=bookstack)](https://www.modem7.com/books/docker-backup/page/backup-docker-using-borgmatic)
+[![GitHub issues](https://img.shields.io/github/issues/borgmatic-collective/docker-borgmatic)](https://github.com/borgmatic-collective/docker-borgmatic/issues)
+[![GitHub stars](https://img.shields.io/github/stars/borgmatic-collective/docker-borgmatic)](https://github.com/borgmatic-collective/docker-borgmatic/stargazers)
+[![Docker Stars](https://img.shields.io/docker/stars/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
+[![Docker Pulls](https://img.shields.io/docker/pulls/b3vis/borgmatic)](https://hub.docker.com/r/b3vis/borgmatic)
+[![GitHub last commit](https://img.shields.io/github/last-commit/borgmatic-collective/docker-borgmatic)](https://github.com/borgmatic-collective/docker-borgmatic)
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/modem7)
-
-Multiarch fork of [borgmatic-collective/docker-borgmatic](https://github.com/borgmatic-collective/docker-borgmatic) running on [S6 Overlay](https://github.com/just-containers/s6-overlay). Supports `linux/amd64` and `linux/arm64`.
+Running on [S6 Overlay](https://github.com/just-containers/s6-overlay). Supports `linux/amd64` and `linux/arm64`.
 
 Includes [Borg](https://github.com/borgbackup/borg), [Borgmatic](https://github.com/borgmatic-collective/borgmatic), [Apprise](https://github.com/caronc/apprise), and optional Docker CLI for container stop/start hooks.
 
@@ -28,7 +26,7 @@ Includes [Borg](https://github.com/borgbackup/borg), [Borgmatic](https://github.
 ```yaml
 services:
   borgmatic:
-    image: modem7/borgmatic-docker
+    image: ghcr.io/borgmatic-collective/borgmatic
     container_name: borgmatic
     volumes:
       - /home:/mnt/source:ro
@@ -443,7 +441,7 @@ docker run --rm -it \
   -v ./data/borgmatic.d:/etc/borgmatic.d/ \
   -v ./data/.config/borg:/root/.config/borg \
   -e BORG_PASSPHRASE=changeme \
-  modem7/borgmatic-docker \
+  ghcr.io/borgmatic-collective/borgmatic \
   borgmatic list
 ```
 

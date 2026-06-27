@@ -6,7 +6,7 @@ ARG PYTHON_VERSION=3.14
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS base
 ARG TARGETARCH
 
-LABEL maintainer='modem7'
+LABEL maintainer='borgmatic-collective'
 
 FROM base AS base-amd64
 ENV S6_OVERLAY_ARCH=x86_64

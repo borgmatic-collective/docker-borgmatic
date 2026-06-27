@@ -1,7 +1,7 @@
 services:
 
   borgmaticrestore:
-    image: modem7/borgmatic-docker
+    image: ghcr.io/borgmatic-collective/borgmatic
     container_name: Borg-restore
     volumes:
       - ${VOLUME_TARGET}:/mnt/borg-repository     # backup repository

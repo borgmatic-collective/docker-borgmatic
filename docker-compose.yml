@@ -1,6 +1,6 @@
 services:
   borgmatic:
-    image: modem7/borgmatic-docker
+    image: ghcr.io/borgmatic-collective/borgmatic
     container_name: Borgmatic
     volumes:
       - ${VOLUME_SOURCE}:/mnt/source:ro                        # backup source
