@@ -42,13 +42,13 @@ jobs:
             type=semver,pattern={{major}}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@master
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: all
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@master
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
@@ -73,6 +73,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: |
             ${{ steps.meta_base_dockerhub.outputs.tags }}
             ${{ steps.meta_base_ghcr.outputs.tags }}
