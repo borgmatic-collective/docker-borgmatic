@@ -2,6 +2,10 @@ services:
   borgmatic:
     image: ghcr.io/borgmatic-collective/borgmatic:latest
     container_name: Borgmatic
+    # Set a fixed hostname so borgmatic's {hostname} archive name format stays
+    # consistent across container rebuilds. Without this, each rebuild gets a
+    # new random hostname, causing prune and compact to miss older archives.
+    hostname: borgmatic
     volumes:
       - ${VOLUME_SOURCE}:/mnt/source:ro                        # backup source
       - ${VOLUME_TARGET}:/mnt/borg-repository                  # backup target

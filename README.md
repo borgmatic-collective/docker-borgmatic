@@ -28,6 +28,7 @@ services:
   borgmatic:
     image: ghcr.io/borgmatic-collective/borgmatic:latest
     container_name: borgmatic
+    hostname: borgmatic
     volumes:
       - /home:/mnt/source:ro
       - ./data/repository:/mnt/borg-repository
