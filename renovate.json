@@ -46,6 +46,14 @@
     {
       "matchDepNames": ["python"],
       "allowedVersions": "/^\\d+\\.\\d+$/"
+    },
+    {
+      "matchDepNames": ["undefined"],
+      "enabled": false
+    },
+    {
+      "matchDepNames": ["ghcr.io/borgmatic-collective/borgmatic"],
+      "enabled": false
     }
   ]
 }

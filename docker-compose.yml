@@ -1,6 +1,6 @@
 services:
   borgmatic:
-    image: ghcr.io/borgmatic-collective/borgmatic
+    image: ghcr.io/borgmatic-collective/borgmatic:latest
     container_name: Borgmatic
     volumes:
       - ${VOLUME_SOURCE}:/mnt/source:ro                        # backup source

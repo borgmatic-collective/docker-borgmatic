@@ -26,7 +26,7 @@ Includes [Borg](https://github.com/borgbackup/borg), [Borgmatic](https://github.
 ```yaml
 services:
   borgmatic:
-    image: ghcr.io/borgmatic-collective/borgmatic
+    image: ghcr.io/borgmatic-collective/borgmatic:latest
     container_name: borgmatic
     volumes:
       - /home:/mnt/source:ro
