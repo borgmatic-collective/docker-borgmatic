@@ -1,10 +1,14 @@
 #!/command/with-contenv bash
 
-if test "$1" -eq 256 ; then
+if [ "$1" -eq 256 ]; then
   e=$((128 + $2))
+  echo "crond crashed with signal $2 (exit code $e)."
+elif [ "$1" -eq 0 ]; then
+  e=0
+  echo "crond stopped cleanly."
 else
   e="$1"
+  echo "crond exited with error code $e."
 fi
 
-echo "Received exit code $e."
 echo "$e" > /run/s6-linux-init-container-results/exitcode

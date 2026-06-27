@@ -1,0 +1,22 @@
+#!/command/with-contenv bash
+
+if [ ! -d /custom-cont-init.d ]; then
+  echo "[custom-scripts] /custom-cont-init.d not mounted, skipping..."
+  exit 0
+fi
+
+scripts=$(find /custom-cont-init.d -maxdepth 1 -name "*.sh" | sort)
+
+if [ -z "$scripts" ]; then
+  echo "[custom-scripts] No scripts found in /custom-cont-init.d, skipping..."
+  exit 0
+fi
+
+echo "[custom-scripts] Running custom init scripts..."
+while IFS= read -r script; do
+  echo "[custom-scripts] Running $script"
+  bash "$script"
+  rc=$?
+  [ $rc -ne 0 ] && echo "[custom-scripts] Warning: $script exited with code $rc"
+done <<< "$scripts"
+echo "[custom-scripts] Done."

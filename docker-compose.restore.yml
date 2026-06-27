@@ -1,13 +1,23 @@
 services:
-  borgmatic:
-    container_name: borg-restore
+
+  borgmaticrestore:
+    image: modem7/borgmatic-docker
+    container_name: Borg-restore
+    volumes:
+      - ${VOLUME_TARGET}:/mnt/borg-repository     # backup repository
+      - ${BORG_RESTORE}:/mnt/restore                # restore target
+      - ${VOLUME_ETC_BORGMATIC}:/etc/borgmatic.d/ # borgmatic config file(s) + crontab.txt
+      - ${VOLUME_BORG_CONFIG}:/root/.config/borg  # config and keyfiles
+      - ${VOLUME_SSH}:/root/.ssh                  # ssh key for remote repositories
+      - ${VOLUME_BORG_CACHE}:/root/.cache/borg    # checksums used for deduplication
     cap_add:
       - SYS_ADMIN
-    volumes:
-      - /host/mount/location:/restore
     security_opt:
       - apparmor:unconfined
       - label:disable
     devices:
       - /dev/fuse:/dev/fuse
-    command: /bin/sh
+    environment:
+      - TZ=$TZ
+      - BORG_PASSPHRASE=${BORG_PASSPHRASE}
+    command: /bin/bash

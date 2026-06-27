@@ -1,0 +1,191 @@
+# Full borgmatic 2.x configuration reference.
+# See https://torsion.org/borgmatic/reference/configuration/ for complete documentation.
+# Generate a fresh copy with: borgmatic config generate -d /etc/borgmatic.d/config.yaml
+
+# ------------------------------------------------------------
+# Source
+# ------------------------------------------------------------
+
+# Directories to back up (required). Globs and tildes are expanded.
+# Borgmatic expands ${VAR} references from the container environment.
+source_directories:
+    - /mnt/source
+    - /etc
+    - /var/log
+
+# Stay in the same file system (do not cross mount points).
+one_file_system: true
+
+# Mode for the files cache. See borg create --help for details.
+files_cache: ctime,size,inode
+
+# Paths to repositories (required). Each entry needs a path and a label.
+repositories:
+    - path: /mnt/borg-repository
+      label: local
+    - path: ${BORG_REPO}
+      label: remote
+
+# Patterns to include or exclude. See borg help patterns.
+patterns:
+    - R /
+    - '- /home/*/.cache'
+    - + /home/myuser
+    - '- /home/*'
+
+# Read patterns from a file, one per line.
+patterns_from:
+    - /etc/borgmatic/patterns
+
+# Paths to exclude. Globs and tildes are expanded.
+exclude_patterns:
+    - '*.pyc'
+    - ~/*/.cache
+    - /etc/ssl
+
+# Read exclude patterns from a file.
+exclude_from:
+    - /etc/borgmatic/excludes
+
+# Exclude directories containing a CACHEDIR.TAG file.
+exclude_caches: true
+
+# Exclude directories containing a file with this name.
+exclude_if_present: .nobackup
+
+# ------------------------------------------------------------
+# Storage
+# ------------------------------------------------------------
+
+# Passphrase for repository encryption. Prefer BORG_PASSPHRASE env var or a passcommand.
+# encryption_passphrase: "changeme"
+
+# Read the passphrase from the output of this command.
+encryption_passcommand: cat /run/secrets/borg-passphrase
+
+# Compression algorithm. See borg create --help.
+compression: auto,lz4
+
+# Upload rate limit in kilobytes/second (0 = unlimited).
+upload_rate_limit: 0
+
+# SSH command to use for remote repositories.
+ssh_command: ssh -i /root/.ssh/id_ed25519
+
+# Alternate remote borg executable.
+borg_remote_path: borg1
+
+# Umask for borg create.
+umask: 0077
+
+# Maximum seconds to wait for a repository/cache lock.
+lock_wait: 5
+
+# Archive name format. Set an explicit name to avoid issues when the container hostname
+# changes between rebuilds (the default uses {hostname} which would break pruning).
+archive_name_format: 'myhost-{now:%Y-%m-%dT%H:%M:%S}'
+
+# ------------------------------------------------------------
+# Retention
+# ------------------------------------------------------------
+
+keep_within: 3H
+keep_minutely: 60
+keep_hourly: 24
+keep_daily: 7
+keep_weekly: 4
+keep_monthly: 6
+keep_yearly: 1
+
+# ------------------------------------------------------------
+# Consistency checks
+# ------------------------------------------------------------
+
+checks:
+    # Check repository integrity. Run every 2 weeks.
+    - name: repository
+      frequency: 2 weeks
+    # Check all archives. Run every 4 weeks.
+    - name: archives
+      frequency: 4 weeks
+    # Extraction dry-run on the most recent archive. Expensive — run monthly.
+    - name: extract
+      frequency: 1 month
+
+# ------------------------------------------------------------
+# Commands (replaces deprecated before_*/after_*/on_error hooks)
+#
+# before/after timing levels:
+#   action       — once per action (create, prune, compact, check) per repository
+#   repository   — once per repository (all actions)
+#   configuration — once per config file (all repositories)
+#   everything   — once per borgmatic run (all config files)
+#
+# when: filters which borgmatic actions trigger this command.
+#   Omit to run for all actions.
+#   Valid values: create, prune, compact, check
+#
+# states: (after hooks only) — finish, fail
+#   Omit to run regardless of outcome.
+# ------------------------------------------------------------
+
+commands:
+    # Runs once at the start of the borgmatic run (all repos, all actions).
+    - before: everything
+      run:
+          - echo "Starting borgmatic run."
+
+    # Runs before each create action, per repository.
+    - before: action
+      when:
+          - create
+      run:
+          - echo "Starting backup."
+
+    # Runs after each successful create action, per repository.
+    - after: action
+      when:
+          - create
+      states:
+          - finish
+      run:
+          - echo "Backup complete."
+
+    # Runs at the end of the borgmatic run only if everything succeeded.
+    - after: everything
+      states:
+          - finish
+      run:
+          - echo "All backups complete."
+
+    # Runs at the end of the borgmatic run if any error occurred.
+    - after: everything
+      states:
+          - fail
+      run:
+          - echo "Borgmatic encountered an error."
+
+# ------------------------------------------------------------
+# Monitoring
+# ------------------------------------------------------------
+
+# Ping a Healthchecks.io URL on start, success, and failure.
+healthchecks:
+    ping_url: ${BORG_HEALTHCHECK_URL}
+
+# ------------------------------------------------------------
+# Databases (backed up alongside files)
+# ------------------------------------------------------------
+
+# postgresql_databases:
+#     - name: mydb
+#       hostname: db
+#       username: postgres
+#       password: secret
+#       format: custom
+
+# mariadb_databases:
+#     - name: mydb
+#       hostname: db
+#       username: root
+#       password: secret

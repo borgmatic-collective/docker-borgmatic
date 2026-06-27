@@ -1,0 +1,569 @@
+name: Docker CI
+
+on:
+  push:
+    paths:
+      - Dockerfile
+      - requirements.txt
+      - root/**
+      - .github/workflows/CI.yml
+  pull_request:
+    paths:
+      - Dockerfile
+      - requirements.txt
+      - root/**
+      - .github/workflows/CI.yml
+  workflow_dispatch:
+
+env:
+  IMAGE: borgmatic-test:ci
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Hadolint
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: Dockerfile
+          config: .hadolint.yaml
+
+      - name: Check S6 overlay version is latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(grep -Eo 'S6_OVERLAY_VERSION=[0-9.]+' Dockerfile | cut -d= -f2)
+          latest=$(gh api repos/just-containers/s6-overlay/releases/latest --jq '.tag_name' | tr -d 'v')
+          echo "Current: $current"
+          echo "Latest:  $latest"
+          [ "$current" = "$latest" ] || \
+            { echo "::warning::S6 overlay is outdated ($current → $latest). Renovate should open a PR."; }
+
+      - name: ShellCheck
+        run: |
+          find root -type f \( -name "run" -o -name "finish" \) \
+            -exec shellcheck --shell=bash --exclude=SC1091,SC2086 {} +
+          shellcheck --shell=bash root/usr/local/bin/borgmatic-start
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: ${{ env.IMAGE }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save image
+        run: docker save ${{ env.IMAGE }} | gzip > /tmp/borgmatic-image.tar.gz
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: borgmatic-image
+          path: /tmp/borgmatic-image.tar.gz
+          retention-days: 1
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      BORG_CI_PASSPHRASE: ci-test-passphrase
+      BORG_CI_PASSPHRASE_ENVVAR: ci-envvar-passphrase
+      BORG_CI_PASSPHRASE_CMD: ci-passcommand-passphrase
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download image
+        uses: actions/download-artifact@v8
+        with:
+          name: borgmatic-image
+          path: /tmp
+
+      - name: Load image
+        run: docker load < /tmp/borgmatic-image.tar.gz
+
+      # ---------------------------------------------------------------
+      # Binary sanity checks (fast, no S6)
+      # ---------------------------------------------------------------
+
+      - name: borg binary responds to --version
+        run: |
+          out=$(docker run --rm --entrypoint borg ${{ env.IMAGE }} --version)
+          echo "$out"
+          [[ "$out" == borg\ * ]] || { echo "Unexpected output: $out"; exit 1; }
+
+      - name: borgmatic binary responds to --version
+        run: |
+          out=$(docker run --rm --entrypoint borgmatic ${{ env.IMAGE }} --version)
+          echo "$out"
+          echo "$out" | grep -qE '^[0-9]+\.[0-9]+' || { echo "Unexpected output: $out"; exit 1; }
+
+      - name: apprise binary is present
+        run: docker run --rm --entrypoint apprise ${{ env.IMAGE }} --version
+
+      - name: borgmatic-start is present and executable
+        run: docker run --rm --entrypoint sh ${{ env.IMAGE }} -c "test -x /usr/local/bin/borgmatic-start"
+
+      - name: borgmatic-start passes arguments through to borgmatic
+        run: |
+          out=$(docker run --rm --entrypoint bash ${{ env.IMAGE }} /usr/local/bin/borgmatic-start --version)
+          echo "$out"
+          echo "$out" | grep -qE '^[0-9]+\.[0-9]+' || { echo "borgmatic-start did not invoke borgmatic correctly"; exit 1; }
+
+      # ---------------------------------------------------------------
+      # Config validation
+      # ---------------------------------------------------------------
+
+      - name: borgmatic config validate
+        run: |
+          cat > /tmp/test-config.yaml <<'EOF'
+          source_directories:
+              - /tmp/source
+          repositories:
+              - path: /tmp/test-repo
+                label: test
+          compression: lz4
+          keep_daily: 7
+          keep_weekly: 4
+          keep_monthly: 12
+          EOF
+          docker run --rm \
+            --entrypoint borgmatic \
+            -v /tmp/test-config.yaml:/etc/borgmatic.d/config.yaml:ro \
+            ${{ env.IMAGE }} \
+            config validate
+
+      - name: borgmatic config validate rejects invalid config
+        run: |
+          cat > /tmp/test-config-invalid.yaml <<'EOF'
+          source_directories:
+              - /tmp/source
+          repositories:
+              - path: /tmp/test-repo
+                label: test
+          keep_daily: "not-a-number"
+          EOF
+          exit_code=0
+          docker run --rm \
+            --entrypoint borgmatic \
+            -v /tmp/test-config-invalid.yaml:/etc/borgmatic.d/config.yaml:ro \
+            ${{ env.IMAGE }} \
+            config validate || exit_code=$?
+          [ "$exit_code" -ne 0 ] || { echo "Expected non-zero exit for invalid config"; exit 1; }
+
+      # ---------------------------------------------------------------
+      # End-to-end backup and restore
+      # Run borgmatic directly (no S6) against a real Borg repository.
+      # ---------------------------------------------------------------
+
+      - name: End-to-end backup and restore
+        run: |
+          mkdir -p /tmp/e2e/source /tmp/e2e/repo /tmp/e2e/config
+          echo "hello from borgmatic e2e test" > /tmp/e2e/source/testfile.txt
+          echo "another file"                  > /tmp/e2e/source/another.txt
+
+          cat > /tmp/e2e/config/config.yaml <<'EOF'
+          source_directories:
+              - /mnt/source
+          repositories:
+              - path: /mnt/repo
+                label: test
+          encryption_passphrase: "${BORG_CI_PASSPHRASE}"
+          archive_name_format: 'test-{now:%Y-%m-%dT%H:%M:%S}'
+          keep_daily: 1
+          EOF
+
+          run_borg() {
+            docker run --rm \
+              -v /tmp/e2e/source:/mnt/source:ro \
+              -v /tmp/e2e/repo:/mnt/repo \
+              -v /tmp/e2e/config:/etc/borgmatic.d:ro \
+              -e BORG_CI_PASSPHRASE \
+              --entrypoint borgmatic \
+              ${{ env.IMAGE }} "$@"
+          }
+
+          run_borg repo-create --encryption repokey
+          run_borg create --stats -v 1
+
+          count=$(docker run --rm \
+            -v /tmp/e2e/repo:/mnt/repo \
+            -v /tmp/e2e/config:/etc/borgmatic.d:ro \
+            -e BORG_CI_PASSPHRASE \
+            --entrypoint borgmatic \
+            ${{ env.IMAGE }} list --json \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(sum(len(r['archives']) for r in d))")
+          [ "$count" -ge 1 ] || { echo "Expected at least 1 archive, got $count"; exit 1; }
+
+          archive=$(docker run --rm \
+            -v /tmp/e2e/repo:/mnt/repo \
+            -v /tmp/e2e/config:/etc/borgmatic.d:ro \
+            -e BORG_CI_PASSPHRASE \
+            --entrypoint borgmatic \
+            ${{ env.IMAGE }} list --json \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0]['archives'][-1]['archive'])")
+          echo "Checking archive contents: $archive"
+
+          contents=$(docker run --rm \
+            -v /tmp/e2e/repo:/mnt/repo \
+            -e BORG_PASSPHRASE=${{ env.BORG_CI_PASSPHRASE }} \
+            --entrypoint borg \
+            ${{ env.IMAGE }} list /mnt/repo::$archive)
+          echo "$contents"
+          echo "$contents" | grep -q "testfile.txt" || \
+            { echo "testfile.txt not found in archive"; exit 1; }
+          echo "$contents" | grep -q "another.txt" || \
+            { echo "another.txt not found in archive"; exit 1; }
+          echo "Archive contents verified."
+
+      - name: End-to-end env var expansion in borgmatic config
+        run: |
+          mkdir -p /tmp/e2e-envvar/source /tmp/e2e-envvar/repo /tmp/e2e-envvar/config
+          echo "env var test" > /tmp/e2e-envvar/source/file.txt
+
+          cat > /tmp/e2e-envvar/config/config.yaml <<'EOF'
+          source_directories:
+              - ${TEST_SOURCE_DIR}
+          repositories:
+              - path: /mnt/repo
+                label: test
+          encryption_passphrase: "${TEST_PASSPHRASE}"
+          archive_name_format: 'test-{now:%Y-%m-%dT%H:%M:%S}'
+          keep_daily: 1
+          EOF
+
+          run_envvar() {
+            docker run --rm \
+              -v /tmp/e2e-envvar/source:/mnt/source:ro \
+              -v /tmp/e2e-envvar/repo:/mnt/repo \
+              -v /tmp/e2e-envvar/config:/etc/borgmatic.d:ro \
+              -e TEST_SOURCE_DIR=/mnt/source \
+              -e TEST_PASSPHRASE=${{ env.BORG_CI_PASSPHRASE_ENVVAR }} \
+              --entrypoint borgmatic \
+              ${{ env.IMAGE }} "$@"
+          }
+
+          run_envvar repo-create --encryption repokey
+          run_envvar create
+          echo "Env var expansion verified."
+
+      - name: End-to-end encryption_passcommand
+        run: |
+          mkdir -p /tmp/e2e-passcommand/source /tmp/e2e-passcommand/repo /tmp/e2e-passcommand/config
+          echo "passcommand test" > /tmp/e2e-passcommand/source/file.txt
+          echo "${{ env.BORG_CI_PASSPHRASE_CMD }}" > /tmp/e2e-passcommand/passphrase
+
+          cat > /tmp/e2e-passcommand/config/config.yaml <<'EOF'
+          source_directories:
+              - /mnt/source
+          repositories:
+              - path: /mnt/repo
+                label: test
+          encryption_passcommand: "cat /run/secrets/passphrase"
+          archive_name_format: 'test-{now:%Y-%m-%dT%H:%M:%S}'
+          keep_daily: 1
+          EOF
+
+          run_passcommand() {
+            docker run --rm \
+              -v /tmp/e2e-passcommand/source:/mnt/source:ro \
+              -v /tmp/e2e-passcommand/repo:/mnt/repo \
+              -v /tmp/e2e-passcommand/config:/etc/borgmatic.d:ro \
+              -v /tmp/e2e-passcommand/passphrase:/run/secrets/passphrase:ro \
+              --entrypoint borgmatic \
+              ${{ env.IMAGE }} "$@"
+          }
+
+          run_passcommand repo-create --encryption repokey
+          run_passcommand create
+          echo "encryption_passcommand verified."
+
+      # ---------------------------------------------------------------
+      # S6 startup / cron configuration
+      # Wait for crond to appear in logs before asserting, rather than
+      # sleeping a fixed amount — faster and less brittle.
+      # ---------------------------------------------------------------
+
+      - name: Startup log contains version info
+        run: |
+          docker run -d --name test-versions -e CRON=false ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-versions 2>&1 | grep -q "Time Zone:"; do sleep 1; done'
+          logs=$(docker logs test-versions 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -qE "borg [0-9]"       || { echo "borg version missing";       exit 1; }
+          echo "$logs" | grep -qE "borgmatic [0-9]"   || { echo "borgmatic version missing";  exit 1; }
+          echo "$logs" | grep -qE "apprise [0-9]"     || { echo "apprise version missing";    exit 1; }
+          echo "$logs" | grep -qE "python [0-9]"      || { echo "python version missing";     exit 1; }
+          echo "$logs" | grep -q  "Time Zone:"        || { echo "timezone line missing";      exit 1; }
+
+      - name: CRON env var sets schedule and uses borgmatic-start
+        run: |
+          docker run -d --name test-cron -e CRON="0 2 * * *" ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-cron 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-cron 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "0 2 \* \* \* borgmatic-start" || \
+            { echo "Expected schedule with borgmatic-start not found"; exit 1; }
+
+      - name: No CRON and no crontab.txt falls back to default schedule
+        run: |
+          docker run -d --name test-cron-default ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-cron-default 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-cron-default 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "0 1 \* \* \* borgmatic-start" || \
+            { echo "Default schedule not found in logs"; exit 1; }
+
+      - name: CRON=false disables cron
+        run: |
+          docker run -d --name test-cron-false -e CRON=false ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-cron-false 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-cron-false 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "Cron is now disabled" || \
+            { echo "'Cron is now disabled' not found"; exit 1; }
+
+      - name: Direct borgmatic call in CRON_COMMAND triggers warning
+        run: |
+          docker run -d --name test-warn \
+            -e CRON="0 2 * * *" \
+            -e "CRON_COMMAND=borgmatic --stats -v 0 2>&1" \
+            ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-warn 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-warn 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "WARNING: Your cron job calls 'borgmatic' directly" || \
+            { echo "Expected warning not found"; exit 1; }
+
+      - name: borgmatic-start in CRON_COMMAND does not trigger warning
+        run: |
+          docker run -d --name test-no-warn \
+            -e CRON="0 2 * * *" \
+            -e "CRON_COMMAND=borgmatic-start --stats -v 0 2>&1" \
+            ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-no-warn 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-no-warn 2>&1)
+          echo "$logs"
+          if echo "$logs" | grep -q "WARNING"; then
+            echo "Unexpected warning found when using borgmatic-start"
+            exit 1
+          fi
+
+      - name: EXTRA_CRON appends a second job
+        run: |
+          docker run -d --name test-extra-cron \
+            -e CRON="0 2 * * *" \
+            -e "EXTRA_CRON=0 3 * * * borgmatic-start --stats" \
+            ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-extra-cron 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-extra-cron 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "0 2 \* \* \*" || { echo "Primary cron job missing"; exit 1; }
+          echo "$logs" | grep -q "0 3 \* \* \*" || { echo "Extra cron job missing";   exit 1; }
+
+      # ---------------------------------------------------------------
+      # Custom init scripts
+      # ---------------------------------------------------------------
+
+      - name: custom-cont-init.d scripts run at startup
+        run: |
+          mkdir -p /tmp/custom-init
+          cat > /tmp/custom-init/test.sh <<'EOF'
+          #!/bin/bash
+          echo "CUSTOM_SCRIPT_RAN"
+          EOF
+          chmod +x /tmp/custom-init/test.sh
+
+          docker run -d --name test-custom-init \
+            -e CRON=false \
+            -v /tmp/custom-init:/custom-cont-init.d:ro \
+            ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-custom-init 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-custom-init 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "CUSTOM_SCRIPT_RAN" || \
+            { echo "Custom init script did not run"; exit 1; }
+
+      - name: Logs are timestamped
+        run: |
+          docker run -d --name test-timestamps -e CRON=false ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-timestamps 2>&1 | grep -q "\[20"; do sleep 1; done'
+          logs=$(docker logs test-timestamps 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -qE '^\[20[0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\]' || \
+            { echo "Timestamped log lines not found"; exit 1; }
+
+      # ---------------------------------------------------------------
+      # Extra packages
+      # ---------------------------------------------------------------
+
+      - name: EXTRA_PKGS installs requested packages
+        run: |
+          docker run -d --name test-extra-pkgs \
+            -e CRON=false \
+            -e EXTRA_PKGS="jq nano" \
+            ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-extra-pkgs 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-extra-pkgs 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "\[custom-init\] Installing extra packages: jq nano" || \
+            { echo "Install log line not found"; exit 1; }
+          docker exec test-extra-pkgs jq --version || \
+            { echo "jq not found after install"; exit 1; }
+          docker exec test-extra-pkgs nano --version || \
+            { echo "nano not found after install"; exit 1; }
+
+      # ---------------------------------------------------------------
+      # Secret file expansion
+      # ---------------------------------------------------------------
+
+      - name: BORG_PASSPHRASE_FILE expands to BORG_PASSPHRASE
+        run: |
+          echo "supersecretpassphrase" > /tmp/test-passphrase
+          docker run -d --name test-secret \
+            -e CRON=false \
+            -e BORG_PASSPHRASE_FILE=/run/secrets/passphrase \
+            -v /tmp/test-passphrase:/run/secrets/passphrase:ro \
+            ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-secret 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-secret 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "Setting BORG_PASSPHRASE from the content of /run/secrets/passphrase" || \
+            { echo "BORG_PASSPHRASE_FILE expansion not found"; exit 1; }
+          echo "$logs" | grep -q "Unsetting BORG_PASSPHRASE_FILE" || \
+            { echo "BORG_PASSPHRASE_FILE was not unset after expansion"; exit 1; }
+
+      - name: Missing secret file produces an error
+        run: |
+          docker run -d --name test-missing-secret \
+            -e CRON=false \
+            -e BORG_PASSPHRASE_FILE=/run/secrets/does-not-exist \
+            ${{ env.IMAGE }}
+          timeout 30 bash -c \
+            'until docker logs test-missing-secret 2>&1 | grep -q "crond"; do sleep 1; done'
+          logs=$(docker logs test-missing-secret 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "Error: File /run/secrets/does-not-exist does not exist or is empty" || \
+            { echo "Expected error message for missing secret file not found"; exit 1; }
+
+      # ---------------------------------------------------------------
+      # Signal forwarding via borgmatic-start
+      # ---------------------------------------------------------------
+
+      - name: borgmatic-start forwards SIGTERM to borgmatic
+        run: |
+          cat > /tmp/mock-borgmatic <<'MOCK'
+          #!/bin/bash
+          trap 'echo "BORGMATIC_SIGTERM_RECEIVED"; exit 0' TERM
+          echo "BORGMATIC_STARTED"
+          sleep 60
+          MOCK
+          chmod +x /tmp/mock-borgmatic
+
+          # Run borgmatic-start as PID 1 via bash so it receives SIGTERM directly
+          docker run -d --name test-signal \
+            -v /tmp/mock-borgmatic:/usr/local/bin/borgmatic:ro \
+            --entrypoint bash \
+            ${{ env.IMAGE }} \
+            /usr/local/bin/borgmatic-start
+
+          timeout 10 bash -c \
+            'until docker logs test-signal 2>&1 | grep -q "BORGMATIC_STARTED"; do sleep 1; done'
+
+          docker kill --signal SIGTERM test-signal
+
+          timeout 10 bash -c \
+            'until docker logs test-signal 2>&1 | grep -q "BORGMATIC_SIGTERM_RECEIVED\|Caught signal"; do sleep 1; done'
+
+          logs=$(docker logs test-signal 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "BORGMATIC_STARTED" || \
+            { echo "Mock borgmatic never started"; exit 1; }
+          echo "$logs" | grep -qE "Caught signal|BORGMATIC_SIGTERM_RECEIVED" || \
+            { echo "SIGTERM was not forwarded to borgmatic"; exit 1; }
+
+      # ---------------------------------------------------------------
+      # FILE__VARNAME secret injection (init-envfile S6 service)
+      # ---------------------------------------------------------------
+
+      - name: FILE__VARNAME expands to env var at startup
+        run: |
+          echo "injected-via-file" > /tmp/test-file-var
+
+          docker run -d --name test-init-envfile \
+            -e CRON=false \
+            -e FILE__MY_SECRET=/run/secrets/my_secret \
+            -v /tmp/test-file-var:/run/secrets/my_secret:ro \
+            ${{ env.IMAGE }}
+
+          timeout 30 bash -c \
+            'until docker logs test-init-envfile 2>&1 | grep -q "\[init-envfile\]"; do sleep 1; done'
+
+          logs=$(docker logs test-init-envfile 2>&1)
+          echo "$logs"
+          echo "$logs" | grep -q "\[init-envfile\] Set MY_SECRET from /run/secrets/my_secret" || \
+            { echo "init-envfile did not set MY_SECRET"; exit 1; }
+          echo "$logs" | grep -q "\[init-envfile\] Unset FILE__MY_SECRET" || \
+            { echo "init-envfile did not unset FILE__MY_SECRET"; exit 1; }
+
+          val=$(docker exec test-init-envfile cat /run/s6/container_environment/MY_SECRET)
+          [ "$val" = "injected-via-file" ] || \
+            { echo "MY_SECRET value wrong, got: $val"; exit 1; }
+
+          docker exec test-init-envfile sh -c \
+            '[ ! -f /run/s6/container_environment/FILE__MY_SECRET ]' || \
+            { echo "FILE__MY_SECRET was not removed from container environment"; exit 1; }
+
+      # ---------------------------------------------------------------
+      # Cleanup — always runs so containers don't linger on failure
+      # ---------------------------------------------------------------
+
+      - name: Cleanup containers
+        if: always()
+        run: |
+          docker rm -f \
+            test-versions \
+            test-cron \
+            test-cron-default \
+            test-cron-false \
+            test-warn \
+            test-no-warn \
+            test-extra-cron \
+            test-custom-init \
+            test-timestamps \
+            test-extra-pkgs \
+            test-secret \
+            test-missing-secret \
+            test-signal \
+            test-init-envfile \
+            2>/dev/null || true

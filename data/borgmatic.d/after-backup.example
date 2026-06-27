@@ -1,0 +1,21 @@
+#!/bin/bash
+# shellcheck shell=bash
+# Runs after the borgmatic run finishes (success or failure — use states: [finish, fail]).
+# Mount this directory to /etc/borgmatic.d/ and reference it in your borgmatic config:
+#
+#   commands:
+#     - after: everything
+#       states: [finish, fail]
+#       run:
+#           - /etc/borgmatic.d/after-backup
+#
+# Requires DOCKERCLI=true and /var/run/docker.sock mounted.
+#
+# Starts all containers that were stopped in before-backup (matched by "backup" label).
+# Adjust the --project-directory path to your Docker Compose project.
+
+timestamp() { date '+%Y-%m-%dT%H:%M:%S'; }
+
+echo "$(timestamp) - Starting containers..."
+docker compose --project-directory /mnt/docker/mystack start
+echo "$(timestamp) - Done."

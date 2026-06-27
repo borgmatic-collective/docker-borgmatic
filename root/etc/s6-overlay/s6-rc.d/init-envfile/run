@@ -1,23 +1,22 @@
-#!/usr/bin/with-contenv bash
-# shellcheck shell=bash
+#!/command/with-contenv bash
 
-# This script originates from the base image by LinuxServer.io
-# (https://www.linuxserver.io/). It is provided under the GNU
-# GENERAL PUBLIC LICENSE Version 3.
+mapfile -t file_vars < <(compgen -e | grep '^FILE__')
 
-if find /run/s6/container_environment/FILE__* -maxdepth 1 > /dev/null 2>&1; then
-    for FILENAME in /run/s6/container_environment/FILE__*; do
-            SECRETFILE=$(cat "${FILENAME}")
-            if [[ -f ${SECRETFILE} ]]; then
-                FILESTRIP=${FILENAME//FILE__/}
-                if [[ $(tail -n1 "${SECRETFILE}" | wc -l) != 0 ]]; then
-                    echo "[env-init] Your secret: ${FILENAME##*/}"
-                    echo "           contains a trailing newline and may not work as expected"
-                fi
-                cat "${SECRETFILE}" >"${FILESTRIP}"
-                echo "[env-init] ${FILESTRIP##*/} set from ${FILENAME##*/}"
-            else
-                echo "[env-init] cannot find secret in ${FILENAME##*/}"
-            fi
-    done
+if [ ${#file_vars[@]} -eq 0 ]; then
+  echo "[init-envfile] No FILE__ variables found, skipping..."
+  exit 0
 fi
+
+for var_name in "${file_vars[@]}"; do
+  var_value="${!var_name}"
+  target_var="${var_name#FILE__}"
+
+  if [ -f "$var_value" ]; then
+    printf '%s' "$(cat "$var_value")" > /run/s6/container_environment/"$target_var"
+    echo "[init-envfile] Set $target_var from $var_value"
+    rm -f /run/s6/container_environment/"$var_name"
+    echo "[init-envfile] Unset $var_name"
+  else
+    echo "[init-envfile] Warning: $var_name points to $var_value which does not exist, skipping"
+  fi
+done

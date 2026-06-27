@@ -1,14 +1,43 @@
 services:
   borgmatic:
-    image: ghcr.io/borgmatic-collective/borgmatic
-    container_name: borgmatic
+    image: modem7/borgmatic-docker
+    container_name: Borgmatic
     volumes:
-      - ${VOLUME_SOURCE}:/mnt/source:ro            # backup source
-      - ${VOLUME_TARGET}:/mnt/borg-repository      # backup target
-      - ${VOLUME_ETC_BORGMATIC}:/etc/borgmatic.d/  # borgmatic config file(s) + crontab.txt
-      - ${VOLUME_BORG_CONFIG}:/root/.config/borg   # config and keyfiles
-      - ${VOLUME_SSH}:/root/.ssh                   # ssh key for remote repositories
-      - ${VOLUME_BORG_CACHE}:/root/.cache/borg     # checksums used for deduplication
+      - ${VOLUME_SOURCE}:/mnt/source:ro                        # backup source
+      - ${VOLUME_TARGET}:/mnt/borg-repository                  # backup target
+      - ${VOLUME_ETC_BORGMATIC}:/etc/borgmatic.d/              # borgmatic config file(s) + crontab.txt
+      - ${VOLUME_BORG_CONFIG}:/root/.config/borg               # config and keyfiles
+      - ${VOLUME_SSH}:/root/.ssh                               # ssh key for remote repositories
+      - ${VOLUME_BORG_CACHE}:/root/.cache/borg                 # checksums used for deduplication
+      - ${VOLUME_BORGMATIC_STATE}:/root/.local/state/borgmatic  # borgmatic state (periodic check tracking)
+      # Optional: mount hook scripts from a dedicated directory
+      # - ./borgscripts:/borgscripts:ro
+      # Optional: run custom init scripts at container startup
+      # - ./custom-cont-init.d:/custom-cont-init.d:ro
+      # Optional: mount Docker socket to stop/start containers during backup
+      # - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - TZ=${TZ}
       - BORG_PASSPHRASE=${BORG_PASSPHRASE}
+      # Pass through env vars used in borgmatic config files (${VAR} expansion)
+      # - BORG_SOURCE_1=${BORG_SOURCE_1}
+      # - BORG_REPO=${BORG_REPO}
+      # - BORG_HEALTHCHECK_URL=${BORG_HEALTHCHECK_URL}
+      # Install Docker CLI for container stop/start hooks
+      # - DOCKERCLI=true
+      # Custom cron schedule and command (overrides crontab.txt and default)
+      # - CRON=${BORG_CRON}
+      # - CRON_COMMAND=${BORG_CRON_COMMAND}
+      # Additional cron jobs (multi-line YAML block scalar)
+      # - EXTRA_CRON=|-
+      #     @daily borgmatic-start check -v 1 2>&1
+      #     0 7 1 * * borgmatic-start compact 2>&1
+      # Additional Alpine packages to install at startup
+      # - EXTRA_PKGS=rclone jq
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: "3"
+    restart: unless-stopped
+    stop_grace_period: 10m  # allow in-progress backups to finish cleanly on docker stop
