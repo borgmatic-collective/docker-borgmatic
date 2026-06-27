@@ -4,7 +4,8 @@
     "config:recommended"
   ],
   "assignees": [
-    "modem7"
+    "modem7",
+    "grantbevis"
   ],
   "labels": [
     "dependencies"
