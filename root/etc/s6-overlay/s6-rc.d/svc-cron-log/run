@@ -1,0 +1,5 @@
+#!/command/with-contenv bash
+
+while IFS= read -r line; do
+  printf '[%s] %s\n' "$(date '+%Y-%m-%dT%H:%M:%S')" "$line"
+done

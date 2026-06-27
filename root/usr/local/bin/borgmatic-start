@@ -1,0 +1,7 @@
+#!/command/with-contenv bash
+
+trap 'echo "[borgmatic] Caught signal, forwarding to borgmatic (PID $borgmatic_pid)..."; kill -TERM $borgmatic_pid 2>/dev/null' TERM INT HUP
+
+borgmatic "$@" &
+borgmatic_pid=$!
+wait $borgmatic_pid

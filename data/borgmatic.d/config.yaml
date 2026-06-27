@@ -1,13 +1,18 @@
 source_directories:
     - /mnt/source
+
 repositories:
-    - path: /mnt/borg-repository/repo
+    - path: /mnt/borg-repository
+      label: local
+
 one_file_system: true
 
-#   Passphase is set in varibable $BORG_PASSPHRASE
-#   encryption_passphrase: "DoNotForgetToChangeYourPassphrase"
+# Passphrase is set via BORG_PASSPHRASE environment variable (or BORG_PASSPHRASE_FILE / FILE__BORG_PASSPHRASE)
 compression: lz4
-archive_name_format: 'backup-{now}'
+
+# Set an explicit hostname to avoid archive naming issues when the container is rebuilt
+# (the default uses {hostname} which changes between rebuilds and breaks pruning)
+archive_name_format: 'myhost-{now:%Y-%m-%dT%H:%M:%S}'
 
 keep_hourly: 2
 keep_daily: 7
@@ -16,21 +21,22 @@ keep_monthly: 12
 keep_yearly: 10
 
 checks:
-  - name: repository
-    frequency: 2 weeks
-  - name: archives
-    frequency: always
-  - name: extract
-    frequency: 2 weeks
-  - name: data
-    frequency: 1 month
+    - name: repository
+      frequency: 2 weeks
+    - name: archives
+      frequency: 4 weeks
 
-before_everything:
-    - echo "Starting a backup job."
-after_everything:
-    - echo "Backup created."
-on_error:
-    - echo "Error while creating a backup."
-
-healthchecks:
-    ping_url: ${BORG_HEALTHCHECK_URL}
+commands:
+    - before: everything
+      run:
+          - echo "Starting a backup job."
+    - after: everything
+      states:
+          - finish
+      run:
+          - echo "Backup created."
+    - after: everything
+      states:
+          - fail
+      run:
+          - echo "Error while creating a backup."

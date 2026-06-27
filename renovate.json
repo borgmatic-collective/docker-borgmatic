@@ -1,0 +1,59 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "assignees": [
+    "modem7",
+    "grantbevis"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "timezone": "Europe/London",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^Dockerfile$/"],
+      "matchStrings": ["ARG S6_OVERLAY_VERSION=(?<currentValue>[0-9.]+)"],
+      "depNameTemplate": "just-containers/s6-overlay",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^Dockerfile$/"],
+      "matchStrings": ["ARG ALPINE_VERSION=(?<currentValue>[0-9.]+)"],
+      "depNameTemplate": "alpine",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^Dockerfile$/"],
+      "matchStrings": ["ARG PYTHON_VERSION=(?<currentValue>[0-9.]+)"],
+      "depNameTemplate": "python",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["alpine"],
+      "allowedVersions": "/^\\d+\\.\\d+$/"
+    },
+    {
+      "matchDepNames": ["python"],
+      "allowedVersions": "/^\\d+\\.\\d+$/"
+    },
+    {
+      "matchDepNames": ["undefined"],
+      "enabled": false
+    },
+    {
+      "matchDepNames": ["ghcr.io/borgmatic-collective/borgmatic"],
+      "enabled": false
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+#!/bin/bash
+# shellcheck shell=bash
+# Runs if an error occurs during the borgmatic run.
+# Mount this directory to /etc/borgmatic.d/ and reference it in your borgmatic config:
+#
+#   commands:
+#     - after: everything
+#       states: [fail]
+#       run:
+#           - /etc/borgmatic.d/failed-backup
+#
+# If you use before-backup to stop containers, reference after-backup here too
+# (or combine into a single after: everything with states: [finish, fail] entry)
+# so containers are never left stopped after a failed backup.
+#
+# Requires DOCKERCLI=true and /var/run/docker.sock mounted.
+
+timestamp() { date '+%Y-%m-%dT%H:%M:%S'; }
+
+# Example: send a notification via Apprise
+# apprise -t "Backup failed" -b "borgmatic error on $(hostname) at $(timestamp)" \
+#     "mailto://user:pass@smtp.example.com"
+
+echo "$(timestamp) - Backup failed"

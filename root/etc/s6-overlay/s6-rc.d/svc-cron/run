@@ -1,10 +1,5 @@
 #!/command/with-contenv bash
 
-# Load the environment variables from the secrets service
-if [ -f /etc/s6-overlay/env/cron-env ]; then
-  source /etc/s6-overlay/env/cron-env
-fi
-
 # Version variables
 borgver=$(borg --version)
 borgmaticver=$(borgmatic --version)
@@ -19,9 +14,8 @@ else
   composever="not installed"
 fi
 
-# Software versions
-echo "-----------------------------------"
-echo "Software Versions:
+echo "-----------------------------------
+Software Versions:
 -----------------------------------
 apprise $apprisever
 $borgver
@@ -32,52 +26,85 @@ python $pythonver
 -----------------------------------
 Time Zone: $TZ
 -----------------------------------"
-if [ -v EXTRA_PKGS ]
-then
-  echo "Additional packages installed:"
-  echo "-----------------------------------"
-  echo $EXTRA_PKGS | tr -s " " "\n"
-  echo "-----------------------------------"
+
+if [ -v EXTRA_PKGS ]; then
+  echo "Additional packages installed:
+-----------------------------------
+$(echo $EXTRA_PKGS | tr -s ' ' '\n')
+-----------------------------------"
 fi
 
+debug_secrets() {
+  echo "${1}: BORG_PASSPHRASE: ${BORG_PASSPHRASE}"
+  echo "${1}: BORG_PASSPHRASE_FILE: ${BORG_PASSPHRASE_FILE}"
+  echo "${1}: YOUR_PASSPHRASE: ${YOUR_PASSPHRASE}"
+  echo "${1}: YOUR_PASSPHRASE_FILE: ${YOUR_PASSPHRASE_FILE}"
+}
 
-DEFAULT_BACKUP_CRON="0 1 * * *"
-DEFAULT_CRON_COMMAND="/usr/local/bin/borgmatic --stats -v 0 2>&1"
-CRONTAB_FILE="/etc/borgmatic.d/crontab.txt"
+[[ "${DEBUG_SECRETS}" = "true" || "${DEBUG_SECRETS}" = "1" ]] && debug_secrets "Before"
 
-# Case 1: BACKUP_CRON is explicitly set to "false" → disable cron
-if [[ "$BACKUP_CRON" = "false" ]]; then
+# Expand *_FILE variables into their base counterparts.
+# compgen -e lists only variable names, avoiding issues with multi-line values.
+for var_name in $(compgen -e | grep -E '^(BORG|YOUR)'); do
+  [[ "$var_name" =~ _FILE$ ]] || continue
+
+  var_value="${!var_name}"
+  original_var_name="${var_name%_FILE}"
+  original_var_value="${!original_var_name}"
+
+  if [ -n "$var_value" ] && [ -s "$var_value" ]; then
+    [ -n "$original_var_value" ] && echo "Note: $original_var_name was already set but is being overwritten by $var_name"
+    export "${original_var_name}=$(cat "${var_value}")"
+    echo "Setting $original_var_name from the content of $var_value"
+    unset "$var_name"
+    echo "Unsetting $var_name"
+  else
+    echo "Error: File $var_value does not exist or is empty."
+  fi
+done
+
+[[ "${DEBUG_SECRETS}" = "true" || "${DEBUG_SECRETS}" = "1" ]] && debug_secrets "After"
+
+if [[ "$CRON" = "false" ]]; then
+    echo "Disabling cron, removing configuration"
     echo "# Cron disabled" > /etc/crontabs/root
-    echo "Cron is disabled"
-
-# Case 2: BACKUP_CRON is set and non-empty → use custom schedule
-elif [[ -n "$BACKUP_CRON" ]]; then
-    CRON_COMMAND="${CRON_COMMAND:-$DEFAULT_CRON_COMMAND}"
-    echo "$BACKUP_CRON $CRON_COMMAND" > /etc/crontabs/root
-    echo "Applying custom cron from env"
-
-# Case 3: BACKUP_CRON is unset or empty, and crontab.txt exists → use crontab file
-elif [[ -f "$CRONTAB_FILE" ]]; then
-    echo "Applying cron from file $CRONTAB_FILE"
-    crontab "$CRONTAB_FILE"
-
-# Case 4: BACKUP_CRON is unset or empty, and crontab.txt doesn't exist → use defaults
+    echo "Cron is now disabled"
+elif [[ -v CRON ]]; then
+    CRON_COMMAND="${CRON_COMMAND:-"borgmatic-start --stats -v 0 2>&1"}"
+    echo "${CRON} ${CRON_COMMAND}" > /etc/crontabs/root
+    echo "Applying custom cron"
 else
-    echo "$DEFAULT_BACKUP_CRON $DEFAULT_CRON_COMMAND" > /etc/crontabs/root
-    echo "Applying default cron"
+    if [ -f /etc/borgmatic.d/crontab.txt ]; then
+        echo "Applying crontab.txt"
+        crontab /etc/borgmatic.d/crontab.txt
+    else
+        echo "No crontab.txt found, applying default schedule: 0 1 * * *"
+        echo "0 1 * * * borgmatic-start --stats -v 0 2>&1" > /etc/crontabs/root
+    fi
 fi
 
-# Apply extra cron if it's set
-if [ -v EXTRA_CRON ]
-then
-    echo "$EXTRA_CRON" >> /etc/crontabs/root
-fi
+[ -v EXTRA_CRON ] && printf '\n%s\n' "$EXTRA_CRON" >> /etc/crontabs/root
 
-# Current crontab var
 crontab=$(crontab -l)
 
-# Output cron settings to console
+# Warn if borgmatic is called directly instead of borgmatic-start, which means
+# SIGTERM from docker stop will not be forwarded and can leave repository locks behind.
+active_crontab=$(echo "$crontab" | grep -v '^#')
+if echo "$active_crontab" | grep -qE '\bborgmatic\b' && \
+   ! echo "$active_crontab" | grep -q 'borgmatic-start'; then
+  printf '%s\n' \
+    "------------------------------------------------------------" \
+    "WARNING: Your cron job calls 'borgmatic' directly." \
+    "Use 'borgmatic-start' instead to ensure SIGTERM is forwarded" \
+    "to borgmatic when the container is stopped. Without this," \
+    "a running backup will be killed immediately rather than" \
+    "allowed to finish, which can leave repository locks behind." \
+    "" \
+    "  Change:  borgmatic --stats -v 0 2>&1" \
+    "  To:      borgmatic-start --stats -v 0 2>&1" \
+    "------------------------------------------------------------"
+fi
+
 echo -e "Cron job set as: \n$crontab\n"
 
-# Start Cron
 exec /usr/sbin/crond -f -L /dev/stdout
