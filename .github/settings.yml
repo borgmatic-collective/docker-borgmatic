@@ -1,0 +1,67 @@
+# https://github.com/apps/settings
+# https://github.com/repository-settings/app
+
+repository:
+  name: docker-borgmatic
+  description: >-
+    Container image for Borgmatic (https://github.com/borgmatic-collective/borgmatic),
+    including Borg, Apprise, and S6 Overlay. Supports linux/amd64 and linux/arm64.
+  homepage: https://hub.docker.com/r/b3vis/borgmatic
+  topics: apprise, backup, borg, borgbackup, btrfs, deduplication, docker, healthchecks, lvm, mariadb, mongodb, mysql, ntfy, postgresql, python, servers, sqlite, uptime-kuma, zabbix, zfs
+
+  private: false
+  has_issues: true
+  has_wiki: true
+  has_downloads: true
+  has_projects: true
+  has_discussions: true
+
+  default_branch: master
+
+  allow_squash_merge: true
+  allow_rebase_merge: true
+  allow_merge_commit: true
+
+  # Auto-delete head branches after merge
+  delete_branch_on_merge: true
+
+  # Always suggest updating PR branches that are behind base
+  allow_update_branch: true
+
+  enable_automated_security_fixes: true
+  enable_vulnerability_alerts: true
+
+# Labels: define labels for Issues and Pull Requests
+labels:
+  - name: bug
+    color: d73a4a
+    description: "Something isn't working"
+  - name: dependencies
+    color: C62109
+    description: "Pull requests that update a dependency file"
+  - name: documentation
+    color: "0075ca"
+    description: "Improvements or additions to documentation"
+  - name: duplicate
+    color: cfd3d7
+    description: "This issue or pull request already exists"
+  - name: enhancement
+    color: a2eeef
+    description: "New feature or request"
+  - name: good first issue
+    color: "7057ff"
+    description: "Good for newcomers"
+  - name: help wanted
+    color: "008672"
+    description: "Extra attention is needed"
+  - name: invalid
+    color: e4e669
+    description: "This doesn't seem right"
+  - name: question
+    color: d876e3
+    description: "Further information is requested"
+  - name: wontfix
+    # was "#ffffff" in the uploaded file — leading # dropped, everything
+    # else in this list omits it and the app expects bare hex
+    color: ffffff
+    description: "This will not be worked on"
