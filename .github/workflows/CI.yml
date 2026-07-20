@@ -19,6 +19,70 @@ env:
   IMAGE: borgmatic-test:ci
 
 jobs:
+  package-availability:
+    name: Check pinned package availability
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Verify pinned packages are resolvable
+        run: |
+          req_file="requirements.txt"
+          index_url=$(grep -Eo '^--extra-index-url[[:space:]]+\S+' "$req_file" | awk '{print $2}')
+          [ -n "$index_url" ] || { echo "::error::No --extra-index-url found in $req_file"; exit 1; }
+          index_url="${index_url%/}"
+
+          failed=0
+
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            case "$line" in --*) continue ;; esac
+
+            if [[ "$line" =~ ^([A-Za-z0-9_.-]+)(\[[^]]+\])?==([A-Za-z0-9_.!+-]+)$ ]]; then
+              name="${BASH_REMATCH[1]}"
+              version="${BASH_REMATCH[3]}"
+            else
+              echo "::warning::Could not parse requirement line: $line"
+              continue
+            fi
+
+            norm_name=$(echo "$name" | tr 'A-Z' 'a-z' | sed -E 's/[-_.]+/-/g')
+            escaped_version=$(printf '%s' "$version" | sed -E 's/[.+]/\\&/g')
+
+            echo "::group::Checking ${name}==${version}"
+
+            http_code=$(curl -s -o /tmp/index-page.html -w '%{http_code}' "${index_url}/${norm_name}/")
+
+            if [ "$http_code" = "200" ]; then
+              # Custom-built wheel hosted on our mirror (e.g. borgbackup, llfuse) -
+              # confirm the pinned version is actually published, not just the project.
+              if grep -qE "${norm_name}-${escaped_version}([.-]|\")" /tmp/index-page.html; then
+                echo "OK: ${name}==${version} found on mirror ($index_url)"
+              else
+                echo "::error::${name}==${version} not found on mirror ($index_url) - package exists there but not this version"
+                failed=1
+              fi
+            elif [ "$http_code" = "404" ]; then
+              # Not on our mirror at all (e.g. borgmatic) - falls through to PyPI.
+              echo "Not hosted on mirror, falling back to PyPI for ${name}==${version}"
+              pypi_code=$(curl -s -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/${name}/${version}/json")
+              if [ "$pypi_code" = "200" ]; then
+                echo "OK: ${name}==${version} found on PyPI"
+              else
+                echo "::error::${name}==${version} not found on mirror or PyPI (PyPI status: $pypi_code)"
+                failed=1
+              fi
+            else
+              echo "::error::Unexpected HTTP $http_code querying mirror for ${name}"
+              failed=1
+            fi
+
+            echo "::endgroup::"
+          done < <(grep -Ev '^\s*(#|--|\s*$)' "$req_file")
+
+          exit $failed
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -52,6 +116,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    needs: package-availability
     steps:
       - name: Checkout
         uses: actions/checkout@v7
