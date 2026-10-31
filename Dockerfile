@@ -2,6 +2,9 @@
 
 ARG ALPINE_VERSION=3.24
 ARG PYTHON_VERSION=3.15
+ARG UV_VERSION=0.13.1
+
+FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS base
 ARG TARGETARCH
@@ -73,8 +76,8 @@ EOF
 COPY --link requirements.txt /
 
 # hadolint ignore=DL3013,DL3018,DL3042
-RUN --mount=type=cache,id=uv-${TARGETARCH},target=/root/.cache/uv,sharing=locked \
-    --mount=from=ghcr.io/astral-sh/uv:0.13.1,source=/uv,target=/usr/local/bin/uv \
+RUN --mount=type=cache,id=uv,target=/root/.cache/uv,sharing=locked \
+    --mount=from=uv,source=/uv,target=/usr/local/bin/uv \
     <<EOF
     set -xe
     export UV_INDEX_STRATEGY=unsafe-best-match UV_LINK_MODE=copy

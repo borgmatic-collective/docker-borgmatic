@@ -24,6 +24,14 @@
     {
       "customType": "regex",
       "managerFilePatterns": ["/^Dockerfile$/"],
+      "matchStrings": ["ARG UV_VERSION=(?<currentValue>[0-9.]+)"],
+      "depNameTemplate": "astral-sh/uv",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^Dockerfile$/"],
       "matchStrings": ["ARG ALPINE_VERSION=(?<currentValue>[0-9.]+)"],
       "depNameTemplate": "alpine",
       "datasourceTemplate": "docker",
