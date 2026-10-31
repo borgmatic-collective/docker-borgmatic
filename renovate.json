@@ -55,5 +55,11 @@
       "matchDepNames": ["ghcr.io/borgmatic-collective/borgmatic"],
       "enabled": false
     }
-  ]
+  ],
+  "pip_requirements": {
+    "enabled": false
+  },
+  "pip-compile": {
+    "managerFilePatterns": ["/(^|/)requirements\\.txt$/"]
+  }
 }

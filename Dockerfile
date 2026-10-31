@@ -73,11 +73,12 @@ EOF
 COPY --link requirements.txt /
 
 # hadolint ignore=DL3013,DL3018,DL3042
-RUN --mount=type=cache,id=pip,target=/root/.cache,sharing=locked \
+RUN --mount=type=cache,id=uv-${TARGETARCH},target=/root/.cache/uv,sharing=locked \
+    --mount=from=ghcr.io/astral-sh/uv:0.13.1,source=/uv,target=/usr/local/bin/uv \
     <<EOF
     set -xe
-    python3 -m pip install -U pip
-    python3 -m pip install -Ur requirements.txt
+    export UV_INDEX_STRATEGY=unsafe-best-match UV_LINK_MODE=copy
+    uv pip install --system --require-hashes --compile-bytecode -r requirements.txt
     apk add --no-cache -U borgmatic-bash-completion
     mv /usr/local/bin/borgmatic /usr/local/bin/borgmatic.bin
 EOF
