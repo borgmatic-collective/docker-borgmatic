@@ -31,6 +31,14 @@
     },
     {
       "customType": "regex",
+      "managerFilePatterns": ["/^uv\\.toml$/"],
+      "matchStrings": ["python-version = \"(?<currentValue>[0-9.]+)\""],
+      "depNameTemplate": "python",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
       "managerFilePatterns": ["/^Dockerfile$/"],
       "matchStrings": ["ARG PYTHON_VERSION=(?<currentValue>[0-9.]+)"],
       "depNameTemplate": "python",
@@ -55,5 +63,11 @@
       "matchDepNames": ["ghcr.io/borgmatic-collective/borgmatic"],
       "enabled": false
     }
-  ]
+  ],
+  "pip_requirements": {
+    "enabled": false
+  },
+  "pip-compile": {
+    "managerFilePatterns": ["/(^|/)requirements\\.txt$/"]
+  }
 }
