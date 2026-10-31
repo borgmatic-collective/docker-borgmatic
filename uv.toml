@@ -1,0 +1,9 @@
+# Settings for `uv pip compile requirements.in -o requirements.txt`.
+# Kept here rather than on the command line because Renovate re-runs the
+# command recorded in the requirements.txt header and rejects some flags.
+[pip]
+universal = true
+generate-hashes = true
+emit-index-url = true
+python-version = "3.15"
+index-strategy = "unsafe-best-match"
