@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## 2026-10-31
+
+### Fixed
+
+- README "FUSE restore": use the `borgmaticrestore` service (the plain `borgmatic` service lacks the FUSE privileges), document `BORG_RESTORE` as the host restore destination, mount archives at `/tmp/restore` instead of over the `/mnt/restore` bind mount, correct the shell (`/bin/bash`) and container name (`Borg-restore`), and add a no-FUSE `borgmatic extract` restore example plus `borgmatic mount`/`umount`. Section renamed "Restoring files". Restore compose now sets `hostname: borgmatic` and `CRON=false`; the one-shot example uses `--hostname` and `-e CRON=false`. Documented `archive_hostname` as the way to make archive lookup independent of the container hostname.
+
+### Fixed (image)
+
+- `svc-cron/finish`: no longer overwrites the container exit code when S6 stops crond with SIGTERM at shutdown. Previously every one-shot command (`docker run IMAGE borgmatic ...`) exited 143 whatever borgmatic returned; the command's own exit code is now kept. `docker stop` now exits 0 instead of 143. A crond crash from any other signal still sets the exit code.
+- `Dockerfile`: `S6_CMD_ARG0=/command/with-contenv` so a command given on the command line (`docker run IMAGE borgmatic ...`, `docker compose run ...`, the restore shell) receives the container environment, including `BORG_PASSPHRASE` and values injected via `FILE__*`. Previously S6 did not pass it and borgmatic failed with "Cannot acquire a passphrase".
+
 ## 2026-06-27 (continued 8)
 
 ### Changed

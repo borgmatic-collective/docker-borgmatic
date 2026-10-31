@@ -24,6 +24,7 @@ ENV LANG='en_US.UTF-8'                      \
     S6_LOGGING="1"                          \
     S6_VERBOSITY="0"                        \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0"     \
+    S6_CMD_ARG0="/command/with-contenv"     \
     TZ="Europe/London"
 
 # Install system packages first — this layer is independent of S6 and borgmatic
