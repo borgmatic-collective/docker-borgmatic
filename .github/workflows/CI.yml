@@ -6,12 +6,14 @@ on:
       - Dockerfile
       - requirements.txt
       - root/**
+      - docker-compose*.yml
       - .github/workflows/CI.yml
   pull_request:
     paths:
       - Dockerfile
       - requirements.txt
       - root/**
+      - docker-compose*.yml
       - .github/workflows/CI.yml
   workflow_dispatch:
 
@@ -112,6 +114,7 @@ jobs:
           find root -type f \( -name "run" -o -name "finish" \) \
             -exec shellcheck --shell=bash --exclude=SC1091,SC2086 {} +
           shellcheck --shell=bash root/usr/local/bin/borgmatic-start
+          shellcheck --shell=bash scripts/test-backup-restore.sh
 
   build:
     name: Build
@@ -361,6 +364,14 @@ jobs:
           run_passcommand repo-create --encryption repokey
           run_passcommand create
           echo "encryption_passcommand verified."
+
+      # ---------------------------------------------------------------
+      # Backup and restore round trip through S6 and the restore compose
+      # file: extract, whole-archive extract, FUSE mount, hostname handling.
+      # ---------------------------------------------------------------
+
+      - name: Backup and restore round trip
+        run: bash scripts/test-backup-restore.sh ${{ env.IMAGE }}
 
       # ---------------------------------------------------------------
       # S6 startup / cron configuration
