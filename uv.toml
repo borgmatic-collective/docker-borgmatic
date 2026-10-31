@@ -5,6 +5,7 @@
 universal = true
 generate-hashes = true
 emit-index-url = true
-# Kept in sync with ARG PYTHON_VERSION in the Dockerfile by Renovate.
+# The Dockerfile ARG PYTHON_VERSION is the source of truth; Renovate bumps both
+# together and CI (scripts/check-python-version-sync.sh) fails if they differ.
 python-version = "3.15"
 index-strategy = "unsafe-best-match"

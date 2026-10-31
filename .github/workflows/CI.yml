@@ -114,11 +114,15 @@ jobs:
           [ "$current" = "$latest" ] || \
             { echo "::warning::S6 overlay is outdated ($current → $latest). Renovate should open a PR."; }
 
+      - name: Check uv.toml Python version matches the Dockerfile
+        run: bash scripts/check-python-version-sync.sh
+
       - name: ShellCheck
         run: |
           find root -type f \( -name "run" -o -name "finish" \) \
             -exec shellcheck --shell=bash --exclude=SC1091,SC2086 {} +
           shellcheck --shell=bash root/usr/local/bin/borgmatic-start
+          shellcheck --shell=bash scripts/check-python-version-sync.sh
 
   build:
     name: Build
