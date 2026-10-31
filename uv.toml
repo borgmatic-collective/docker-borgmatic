@@ -1,4 +1,4 @@
-# Settings for `uv pip compile requirements.in -o requirements.txt`.
+# Settings for `uv pip compile requirements.in --output-file=requirements.txt`.
 # Kept here rather than on the command line because Renovate re-runs the
 # command recorded in the requirements.txt header and rejects some flags.
 [pip]
