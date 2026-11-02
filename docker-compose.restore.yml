@@ -3,6 +3,10 @@ services:
   borgmaticrestore:
     image: ghcr.io/borgmatic-collective/borgmatic:latest
     container_name: Borg-restore
+    # Match the main service. With borgmatic's default archive naming the
+    # hostname is part of the archive name, so 'latest' only finds archives
+    # created under the same hostname (or set archive_hostname in the config).
+    hostname: borgmatic
     volumes:
       - ${VOLUME_TARGET}:/mnt/borg-repository     # backup repository
       - ${BORG_RESTORE}:/mnt/restore                # restore target
@@ -20,4 +24,6 @@ services:
     environment:
       - TZ=$TZ
       - BORG_PASSPHRASE=${BORG_PASSPHRASE}
+      # No scheduled backups from the restore container
+      - CRON=false
     command: /bin/bash

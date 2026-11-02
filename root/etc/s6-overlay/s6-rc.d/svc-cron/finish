@@ -1,6 +1,12 @@
 #!/command/with-contenv bash
 
-if [ "$1" -eq 256 ]; then
+if [ "$1" -eq 256 ] && [ "$2" -eq 15 ]; then
+  # SIGTERM is S6 stopping crond at shutdown (CMD exited or docker stop).
+  # Leave the container exit code alone so a one-shot command's own exit
+  # code is kept.
+  echo "crond stopped by S6 shutdown (signal 15)."
+  exit 0
+elif [ "$1" -eq 256 ]; then
   e=$((128 + $2))
   echo "crond crashed with signal $2 (exit code $e)."
 elif [ "$1" -eq 0 ]; then
